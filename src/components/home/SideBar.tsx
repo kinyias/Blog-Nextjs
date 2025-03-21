@@ -12,47 +12,34 @@ import { Separator } from "@/components/ui/separator"
 
 // Mock data
 const CATEGORIES = [
-  { id: "react", label: "React", count: 12 },
-  { id: "nextjs", label: "Next.js", count: 8 },
-  { id: "typescript", label: "TypeScript", count: 10 },
-  { id: "javascript", label: "JavaScript", count: 15 },
-  { id: "css", label: "CSS", count: 7 },
-  { id: "tailwind", label: "Tailwind", count: 5 },
+  { id: "chandung", label: "Chân dung", count: 12 },
+  { id: "tuyensinh", label: "Tuyển sinh", count: 8 },
+  { id: "duhoc", label: "Du học", count: 10 },
+  { id: "ai", label: "AI", count: 15 },
+  { id: "chuyendoiso", label: "Chuyển đổi số", count: 7 },
+  { id: "chinhtri", label: "Chính trị", count: 5 },
 ]
 
 const RECENT_POSTS = [
   {
     id: 1,
-    title: "Building Scalable APIs with Next.js and TypeScript",
+    title: "Nhiều tỉnh, thành đề xuất thi tốt nghiệp THPT sớm ba tuần",
     slug: "building-scalable-apis",
     date: "June 12, 2023",
   },
   {
     id: 2,
-    title: "Understanding React Server Components",
+    title: "Nữ sinh thành thủ khoa thi đánh giá năng lực sau hơn một tháng ôn luyện",
     slug: "understanding-react-server-components",
     date: "May 28, 2023",
   },
-  { id: 3, title: "Mastering TypeScript Generics", slug: "mastering-typescript-generics", date: "June 5, 2023" },
+  { id: 3, title: "Yêu cầu học sinh giỏi mới được học bán dẫn sẽ gây thiếu nhân lực", slug: "mastering-typescript-generics", date: "June 5, 2023" },
   {
     id: 4,
-    title: "Building a Design System with Tailwind CSS",
+    title: "Hàng loạt sinh viên rút đơn xin visa du học Australia",
     slug: "building-design-system-tailwind",
     date: "June 10, 2023",
   },
-]
-
-const TAGS = [
-  { id: "react", label: "React", count: 12 },
-  { id: "nextjs", label: "Next.js", count: 8 },
-  { id: "typescript", label: "TypeScript", count: 10 },
-  { id: "javascript", label: "JavaScript", count: 15 },
-  { id: "css", label: "CSS", count: 7 },
-  { id: "tailwind", label: "Tailwind", count: 5 },
-  { id: "api", label: "API", count: 4 },
-  { id: "performance", label: "Performance", count: 3 },
-  { id: "seo", label: "SEO", count: 2 },
-  { id: "accessibility", label: "Accessibility", count: 3 },
 ]
 
 export function Sidebar() {
@@ -68,19 +55,19 @@ export function Sidebar() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Search</CardTitle>
+          <CardTitle>Tìm kiếm</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
-            <Input placeholder="Search articles..." />
-            <Button>Search</Button>
+            <Input placeholder="Tìm bài viết..." />
+            <Button>Tìm</Button>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Categories</CardTitle>
+          <CardTitle>Loại tin tức</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {CATEGORIES.map((category) => (
@@ -104,7 +91,7 @@ export function Sidebar() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Posts</CardTitle>
+          <CardTitle>Tin tức hot nhất</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {RECENT_POSTS.map((post) => (
@@ -116,36 +103,6 @@ export function Sidebar() {
               <Separator />
             </div>
           ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Tags</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {TAGS.map((tag) => (
-              <Link key={tag.id} href={`/tags/${tag.id}`}>
-                <Badge variant="outline" className="hover:bg-muted">
-                  {tag.label} ({tag.count})
-                </Badge>
-              </Link>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Newsletter</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">Subscribe to our newsletter to get the latest updates.</p>
-          <div className="space-y-2">
-            <Input placeholder="Your email address" type="email" />
-            <Button className="w-full">Subscribe</Button>
-          </div>
         </CardContent>
       </Card>
     </div>

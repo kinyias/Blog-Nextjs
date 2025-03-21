@@ -15,7 +15,7 @@ interface BlogPost {
   excerpt: string;
   author: string;
   date: string;
-  tags: string[];
+  category: string;
   image: string;
   slug: string;
 }
@@ -49,15 +49,13 @@ export function PostCard({ post }: BlogCardProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-2">
+      <CardContent className="p-4 pt-0">
         <p className="text-sm text-muted-foreground">{post.excerpt}</p>
       </CardContent>
       <CardFooter className="flex flex-wrap gap-2 p-4 pt-0">
-        {post.tags.map((tag) => (
-          <Badge key={tag} variant="secondary">
-            {tag}
+          <Badge key={post.category} variant="secondary">
+            {post.category}
           </Badge>
-        ))}
       </CardFooter>
     </Card>
   );

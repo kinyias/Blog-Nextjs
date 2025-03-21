@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 const recentPosts = [
   {
     id: "1",
-    title: "Getting Started with Next.js",
+    title: "Nhiều tỉnh, thành đề xuất thi tốt nghiệp THPT sớm ba tuần",
     excerpt: "Learn how to build modern web applications with Next.js",
     author: "John Doe",
     date: "2023-10-15",
@@ -16,7 +16,7 @@ const recentPosts = [
   },
   {
     id: "2",
-    title: "Introduction to Tailwind CSS",
+    title: "Hàng loạt sinh viên rút đơn xin visa du học Australia ",
     excerpt: "A comprehensive guide to using Tailwind CSS in your projects",
     author: "Jane Smith",
     date: "2023-10-12",
@@ -26,7 +26,7 @@ const recentPosts = [
   },
   {
     id: "3",
-    title: "Building a CMS with Next.js",
+    title: "Học sinh chuyên Bắc Ninh tiếp tục dẫn đầu kỳ thi của Bách khoa Hà Nội ",
     excerpt: "Step-by-step guide to creating your own content management system",
     author: "Alex Johnson",
     date: "2023-10-08",

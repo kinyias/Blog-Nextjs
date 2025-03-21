@@ -11,68 +11,90 @@ import { PostCard } from './PostCard';
 const BLOG_POSTS = [
   {
     id: 1,
-    title: 'Understanding React Server Components',
+    title: 'Nhiều tỉnh, thành đề xuất thi tốt nghiệp THPT sớm ba tuần',
     excerpt:
-      'Dive into the new React Server Components paradigm and learn how it changes the way we build React applications.',
-    author: 'Alex Chen',
-    date: 'May 28, 2023',
-    tags: ['React', 'Server Components', 'Next.js'],
-    image: '/placeholder.svg?height=400&width=600',
+      'Hà Nội, TP HCM, Nghệ An và Ninh Bình đề xuất thi tốt nghiệp THPT 2025 vào đầu tháng 6, sớm ba tuần so với kế hoạch của Bộ do cả nước đang sắp xếp, sáp nhập tỉnh, thành.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'Tuyển sinh',
+    image: 'https://i1-vnexpress.vnecdn.net/2025/03/17/233a7831-1742225518-1742225528-1262-5018-1742225666.jpg?w=300&h=180&q=100&dpr=1&fit=crop&s=oPv0by699PoIlJNDpK2mlQ',
     slug: 'understanding-react-server-components',
   },
   {
     id: 2,
-    title: 'Mastering TypeScript Generics',
+    title: 'Nữ sinh thành thủ khoa thi đánh giá năng lực sau hơn một tháng ôn luyện',
     excerpt:
-      'Learn how to leverage TypeScript generics to write more flexible and reusable code in your applications.',
-    author: 'Maria Garcia',
-    date: 'June 5, 2023',
-    tags: ['TypeScript', 'JavaScript', 'Web Development'],
-    image: '/placeholder.svg?height=400&width=600',
+      'Nguyễn Phương Thảo đạt 126/150 điểm thi đánh giá năng lực Đại học Quốc gia Hà Nội nhờ nền tảng tốt, tập trung ôn luyện trong hơn một tháng trước kỳ thi.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'Chân dung',
+    image: 'https://i1-vnexpress.vnecdn.net/2025/03/17/cc549938ea995bc70288-174218868-8512-4541-1742189388.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=tF0i6PJqWQFvMRBmdp48cg',
     slug: 'mastering-typescript-generics',
   },
   {
     id: 3,
-    title: 'Building a Design System with Tailwind CSS',
+    title: 'Hàng loạt sinh viên rút đơn xin visa du học Australia',
     excerpt:
-      'Create a consistent and maintainable design system for your projects using Tailwind CSS and shadcn/ui.',
+      'Trang tin của tổ chức xếp hạng THE tuần trước dẫn báo cáo từ Andrew Norton, chuyên gia chính sách tại Đại học Monash, Australia, về tình trạng rút đơn xin thị thực của sinh viên quốc tế. Theo Norton, dữ liệu do Bộ Nội vụ Australia cung cấp, sau đề nghị của ông.',
     author: 'David Kim',
-    date: 'June 10, 2023',
-    tags: ['CSS', 'Tailwind', 'Design Systems'],
-    image: '/placeholder.svg?height=400&width=600',
+    date: '28 thg 5, 2023',
+    category: 'Du học',
+    image: 'https://i1-vnexpress.vnecdn.net/2025/03/16/480775191-1045845160911812-597-4776-1676-1742091243.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=yaibB_9wpsm26k88aneZaA',
     slug: 'building-design-system-tailwind',
   },
   {
     id: 4,
-    title: 'State Management in 2023',
+    title: 'Học sinh lo âu trước thay đổi xét tuyển đại học',
     excerpt:
-      'Explore the current state management landscape in React and which solutions make sense for different project types.',
-    author: 'Emily Johnson',
-    date: 'June 15, 2023',
-    tags: ['React', 'State Management', 'Redux', 'Zustand'],
-    image: '/placeholder.svg?height=400&width=600',
+      'Khoảng 20.000 học sinh, phụ huynh đổ về Hà Nội nghe tư vấn tuyển sinh đại học, không ít nói lo lắng vì chưa rõ phương án của các trường, sau dự kiến thay đổi của Bộ Giáo dục.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'Tuyển sinh',
+    image: 'https://i1-vnexpress.vnecdn.net/2025/03/16/Tu-van-TS-1742089891-7895-1742094674.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=AtS3Bck7H8LVni5eOKyiAg',
     slug: 'state-management-2023',
   },
   {
     id: 5,
-    title: 'Optimizing Next.js Applications',
+    title: 'Yêu cầu học sinh giỏi mới được học bán dẫn sẽ gây thiếu nhân lực',
     excerpt:
-      'Learn advanced techniques to optimize your Next.js applications for performance and SEO.',
-    author: 'Michael Brown',
-    date: 'June 20, 2023',
-    tags: ['Next.js', 'Performance', 'SEO'],
-    image: '/placeholder.svg?height=400&width=600',
+      'Nếu yêu cầu học sinh đạt 8/10 điểm Toán, Lý, Hóa trở lên mới được học ngành bán dẫn sẽ gây thiếu nhân lực, thay vào đó nên mở đầu vào, thắt đầu ra, theo TS Lê Trường Tùng.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'Tuyển sinh',
+    image: 'https://i1-vnexpress.vnecdn.net/2025/03/15/LeTruongTung-8-1742028397-6243-1742028621.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=W2qXnYtspeB2prmeL_iHmw',
     slug: 'optimizing-nextjs-applications',
   },
   {
     id: 6,
-    title: 'Building a Full-Stack App with tRPC',
+    title: 'Bác sĩ robot và trợ lý AI thay máu y tế Trung Quốc',
     excerpt:
-      'Create end-to-end type-safe applications with tRPC, Next.js, and Prisma for a seamless development experience.',
-    author: 'Sophie Taylor',
-    date: 'June 25, 2023',
-    tags: ['tRPC', 'TypeScript', 'Full-Stack'],
-    image: '/placeholder.svg?height=400&width=600',
+      'Từ Thượng Hải, bác sĩ phẫu thuật Youness Ahallal điều khiển cánh tay robot ở Maroc, cách Trung Quốc 12.000 km, để phẫu thuật cắt bỏ khối u cho bệnh nhân.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'AI',
+    image: 'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
+    slug: 'building-full-stack-app-trpc',
+  },
+  {
+    id: 7,
+    title: 'Bác sĩ robot và trợ lý AI thay máu y tế Trung Quốc',
+    excerpt:
+      'Từ Thượng Hải, bác sĩ phẫu thuật Youness Ahallal điều khiển cánh tay robot ở Maroc, cách Trung Quốc 12.000 km, để phẫu thuật cắt bỏ khối u cho bệnh nhân.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'AI',
+    image: 'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
+    slug: 'building-full-stack-app-trpc',
+  },
+  {
+    id: 8,
+    title: 'Bác sĩ robot và trợ lý AI thay máu y tế Trung Quốc',
+    excerpt:
+      'Từ Thượng Hải, bác sĩ phẫu thuật Youness Ahallal điều khiển cánh tay robot ở Maroc, cách Trung Quốc 12.000 km, để phẫu thuật cắt bỏ khối u cho bệnh nhân.',
+    author: 'Admin',
+    date: '28 thg 5, 2023',
+    category: 'AI',
+    image: 'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
     slug: 'building-full-stack-app-trpc',
   },
 ];
@@ -102,7 +124,7 @@ export function PostGrid() {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Latest Articles</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Tin tức mới nhất</h2>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {Array(6)
@@ -127,7 +149,7 @@ export function PostGrid() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Latest Articles</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Tin tức mới nhất</h2>
       </div>
       <motion.div
         className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
@@ -149,7 +171,7 @@ export function PostGrid() {
       {page < totalPages && (
         <div className="flex justify-center pt-8">
           <Button size="lg" className="px-8" onClick={()=> handleLoadMore()}>
-            Load More
+            Tải thêm
           </Button>
         </div>
       )}

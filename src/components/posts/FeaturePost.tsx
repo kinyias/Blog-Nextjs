@@ -52,32 +52,29 @@ export function FeaturedPost() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <Badge variant="secondary" className="mb-2">
-                Featured
+                Nổi bật
               </Badge>
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Building Scalable APIs with Next.js and TypeScript
+              Chốt quy chế tuyển sinh đại học 2025
               </h1>
               <p className="text-muted-foreground md:text-xl">
-                Learn how to build robust, type-safe APIs using Next.js App Router, Prisma, and TypeScript for your next
-                project.
+              Các đại học không còn được xét tuyển sớm, phải quy đổi điểm ở mọi phương thức về thang chung theo nguyên tắc do Bộ Giáo dục đưa ra.
               </p>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>By Sarah Johnson</span>
+              <span>Bởi Admin</span>
               <span>•</span>
-              <span>June 12, 2023</span>
-              <span>•</span>
-              <span>15 min read</span>
+              <span>12 thg 6, 2024</span>
             </div>
             <div>
               <Button asChild>
-                <Link href="/blog/building-scalable-apis">Read More</Link>
+                <Link href="/blog/building-scalable-apis">Đọc thêm</Link>
               </Button>
             </div>
           </div>
           <div className="relative aspect-video overflow-hidden rounded-xl">
             <Image
-              src="/placeholder.svg?height=720&width=1280"
+              src="https://i1-vnexpress.vnecdn.net/2025/02/26/z5577640597163-977ca2342d673db-3531-5615-1740555638.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=HtkOfyaJu-NBicrYABpzlw"
               alt="Building Scalable APIs with Next.js"
               fill
               className="object-cover"
