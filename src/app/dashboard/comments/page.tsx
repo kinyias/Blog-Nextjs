@@ -10,8 +10,8 @@ export default function CommentsPage() {
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Comments</h1>
-        <p className="text-muted-foreground">Review and manage comments on your blog posts.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Bình luận</h1>
+        <p className="text-muted-foreground">Quản lý bình luận cho tin tức.</p>
       </div>
       <CommentsManagement />
     </div>

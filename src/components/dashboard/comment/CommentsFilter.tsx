@@ -5,13 +5,6 @@ import { Search, Calendar } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -19,13 +12,6 @@ import {
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 
-// Sample posts data
-const posts = [
-  { id: '101', title: 'Getting Started with Next.js' },
-  { id: '102', title: 'Introduction to Tailwind CSS' },
-  { id: '103', title: 'Building a CMS with Next.js' },
-  { id: '104', title: 'Advanced React Patterns' },
-];
 
 interface CommentFiltersProps {
   searchQuery: string;
@@ -44,7 +30,6 @@ export function CommentFilters({
   onSearchChange,
   dateRange,
   onDateRangeChange,
-  selectedPostId,
   onPostChange,
 }: CommentFiltersProps) {
   const [date, setDate] = useState<{
@@ -77,29 +62,12 @@ export function CommentFilters({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search comments..."
+            placeholder="Tìm bình luận..."
             className="pl-8"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
-
-        <Select
-          value={selectedPostId || ''}
-          onValueChange={(value) => onPostChange(value || null)}
-        >
-          <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Filter by post" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Posts</SelectItem>
-            {posts.map((post) => (
-              <SelectItem key={post.id} value={post.id}>
-                {post.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
 
         <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
           <PopoverTrigger asChild>
@@ -118,7 +86,7 @@ export function CommentFilters({
                   format(date.from, 'LLL dd, y')
                 )
               ) : (
-                'Filter by date'
+                'Lọc theo ngày'
               )}
             </Button>
           </PopoverTrigger>
@@ -137,7 +105,7 @@ export function CommentFilters({
           onClick={clearFilters}
           className="w-full md:w-auto"
         >
-          Clear Filters
+          Xoá lọc
         </Button>
       </div>
     </div>

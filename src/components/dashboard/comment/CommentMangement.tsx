@@ -255,12 +255,10 @@ export function CommentsManagement() {
           onValueChange={(value) => setActiveTab(value as CommentStatus | "all")}
         >
           <div className="p-4 border-b">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="all">All ({commentCounts.all})</TabsTrigger>
-              <TabsTrigger value="approved">Approved ({commentCounts.approved})</TabsTrigger>
-              <TabsTrigger value="pending">Pending ({commentCounts.pending})</TabsTrigger>
-              <TabsTrigger value="spam">Spam ({commentCounts.spam})</TabsTrigger>
-              <TabsTrigger value="trash">Trash ({commentCounts.trash})</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">Tất cả ({commentCounts.all})</TabsTrigger>
+              <TabsTrigger value="approved">Đã duyệt ({commentCounts.approved})</TabsTrigger>
+              <TabsTrigger value="pending">Đang chờ ({commentCounts.pending})</TabsTrigger>
             </TabsList>
           </div>
 
