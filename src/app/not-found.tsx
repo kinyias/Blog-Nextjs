@@ -7,7 +7,6 @@ import { Header } from "@/components/home/Header"
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       <main className="flex flex-1 items-center justify-center">
         <div className="container flex flex-col items-center justify-center gap-4 px-4 py-16 text-center md:py-24 lg:py-32">
           <div className="space-y-2">

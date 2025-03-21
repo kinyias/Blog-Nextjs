@@ -2,8 +2,8 @@ import { CategoryForm } from "@/components/dashboard/CategoryForm"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Create New Category",
-  description: "Create a new category for your blog posts",
+  title: "Tạo loại tin mới",
+  description: "Tạo loại tin mới",
 }
 
 export default function NewCategoryPage() {

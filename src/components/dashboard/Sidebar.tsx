@@ -62,7 +62,7 @@ export default function DashboardSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === '/dashboard/group'}>
-              <Link href="/dashboard/group" >
+              <Link href="/dashboard/groups" >
                 <Tag className="h-4 w-4" />
                 <span>Nhóm tin</span>
               </Link>
