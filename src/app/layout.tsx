@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
+import QueryProvider from '@/context/query-provider';
 const beVietnamPro = localFont({
   src: [
     {
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${beVietnamPro.className} antialiased`}>
+      <QueryProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -42,6 +44,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
