@@ -30,22 +30,22 @@ import {toast} from 'sonner'
 const data = [
   {
     id: "1",
-    name: "Development",
+    name: "Tuyển sinh",
     postCount: 12,
   },
   {
     id: "2",
-    name: "Design",
+    name: "AI",
     postCount: 8,
   },
   {
     id: "3",
-    name: "Marketing",
+    name: "Du học",
     postCount: 5,
   },
   {
     id: "4",
-    name: "Business",
+    name: "Chính trị",
     postCount: 7,
   },
 ]

@@ -3,23 +3,23 @@ import { ChevronRight } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 
 // Mock data for categories
 const CATEGORIES = [
-  { id: "react", name: "React", count: 12, description: "Modern UI development with React" },
-  { id: "nextjs", name: "Next.js", count: 8, description: "The React framework for production" },
-  { id: "typescript", name: "TypeScript", count: 10, description: "Strongly typed JavaScript" },
-  { id: "javascript", name: "JavaScript", count: 15, description: "Core web programming language" },
-  { id: "css", name: "CSS", count: 7, description: "Styling and layout for the web" },
-  { id: "tailwind", name: "Tailwind", count: 5, description: "Utility-first CSS framework" },
-  { id: "api", name: "API Development", count: 4, description: "Building and consuming APIs" },
-  { id: "performance", name: "Performance", count: 3, description: "Optimizing web applications" },
-  { id: "seo", name: "SEO", count: 2, description: "Search engine optimization techniques" },
-  { id: "accessibility", name: "Accessibility", count: 3, description: "Building inclusive web applications" },
-  { id: "testing", name: "Testing", count: 6, description: "Testing frameworks and methodologies" },
-  { id: "devops", name: "DevOps", count: 4, description: "Deployment and infrastructure" },
+  { id: "chandung", name: "Chân dung", count: 12 },
+  { id: "nextjs", name: "Tuyển sinh", count: 8 },
+  { id: "typescript", name: "AI", count: 10 },
+  { id: "javascript", name: "Chuyển đổi số", count: 15 },
+  { id: "css", name: "Kinh tế", count: 7},
+  { id: "tailwind", name: "Chính trị", count: 5},
+  { id: "api", name: "Doanh nhân", count: 4 },
+  { id: "performance", name: "Du lịch", count: 3 },
+  { id: "seo", name: "Tuyển sinh", count: 2},
+  { id: "accessibility", name: "Du học", count: 3 },
+  { id: "testing", name: "Quốc tế", count: 6 },
+  { id: "devops", name: "Phim", count: 4},
 ]
 
 export default function CategoriesPage() {
@@ -29,17 +29,14 @@ export default function CategoriesPage() {
           {/* Breadcrumb */}
           <nav className="mb-6 flex items-center space-x-1 text-sm text-muted-foreground">
             <Link href="/" className="hover:text-foreground">
-              Home
+              Trang chủ
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="font-medium text-foreground">Categories</span>
+            <span className="font-medium text-foreground">Loại tin tức</span>
           </nav>
 
           <div className="mb-8 space-y-4">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Browse by Category</h1>
-            <p className="text-muted-foreground">
-              Explore our content organized by topics to find exactly what youre looking for.
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Loại tin tức</h1>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -51,12 +48,11 @@ export default function CategoriesPage() {
                       <CardTitle>{category.name}</CardTitle>
                       <Badge variant="secondary">{category.count}</Badge>
                     </div>
-                    <CardDescription>{category.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button variant="ghost" className="px-0" asChild>
                       <span className="flex items-center gap-1">
-                        Browse articles
+                        Xem bài viết
                         <ChevronRight className="h-4 w-4" />
                       </span>
                     </Button>

@@ -5,9 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
 } from '@/components/ui/card';
+import { Eye } from 'lucide-react';
 
 interface BlogPost {
   id: number;
@@ -18,6 +18,7 @@ interface BlogPost {
   category: string;
   image: string;
   slug: string;
+  views: number;
 }
 
 interface BlogCardProps {
@@ -51,12 +52,18 @@ export function PostCard({ post }: BlogCardProps) {
       </CardHeader>
       <CardContent className="p-4 pt-0">
         <p className="text-sm text-muted-foreground">{post.excerpt}</p>
+        <div className="flex flex-wrap gap-2 p-0 pt-5">
+        <Badge key={post.category} variant="secondary">
+          {post.category}
+        </Badge>
+        </div>
+          <div className="flex items-center gap-1 text-sm text-muted-foreground pt-5">
+            <Eye className="h-4 w-4" />
+            <span>{(post.views || 0).toLocaleString()} lượt xem</span>
+          </div>
       </CardContent>
-      <CardFooter className="flex flex-wrap gap-2 p-4 pt-0">
-          <Badge key={post.category} variant="secondary">
-            {post.category}
-          </Badge>
-      </CardFooter>
+      {/* <CardFooter className="flex flex-wrap gap-2 p-4 pt-0 justify-items-end w-full">
+      </CardFooter> */}
     </Card>
   );
 }

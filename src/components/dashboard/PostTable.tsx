@@ -32,48 +32,48 @@ import { toast } from "sonner"
 const data = [
   {
     id: "1",
-    title: "Getting Started with Next.js",
-    excerpt: "Learn how to build modern web applications with Next.js",
+    title: "Nhiều tỉnh, thành đề xuất thi tốt nghiệp THPT sớm ba tuần",
+    excerpt: "Hà Nội, TP HCM, Nghệ An và Ninh Bình đề xuất thi tốt nghiệp THPT 2025 vào đầu tháng 6, sớm ba tuần so với kế hoạch của Bộ do cả nước đang sắp xếp, sáp nhập tỉnh, thành.",
     author: "Admin",
     date: "2023-10-15",
     status: "published",
-    category: "Development",
+    category: "Tuyển sinh",
   },
   {
     id: "2",
-    title: "Introduction to Tailwind CSS",
-    excerpt: "A comprehensive guide to using Tailwind CSS in your projects",
+    title: "Nữ sinh thành thủ khoa thi đánh giá năng lực sau hơn một tháng ôn luyện",
+    excerpt: "Nguyễn Phương Thảo đạt 126/150 điểm thi đánh giá năng lực Đại học Quốc gia Hà Nội nhờ nền tảng tốt, tập trung ôn luyện trong hơn một tháng trước kỳ thi.",
     author: "Admin",
     date: "2023-10-12",
     status: "published",
-    category: "Design",
+    category: "Tuyển sinh",
   },
   {
     id: "3",
-    title: "Building a CMS with Next.js",
-    excerpt: "Step-by-step guide to creating your own content management system",
+    title: "Hàng loạt sinh viên rút đơn xin visa du học Australia",
+    excerpt: "Trang tin của tổ chức xếp hạng THE tuần trước dẫn báo cáo từ Andrew Norton, chuyên gia chính sách tại Đại học Monash, Australia, về tình trạng rút đơn xin thị thực của sinh viên quốc tế. Theo Norton, dữ liệu do Bộ Nội vụ Australia cung cấp, sau đề nghị của ông.",
     author: "Admin",
     date: "2023-10-08",
     status: "draft",
-    category: "Development",
+    category: "Tuyển sinh",
   },
   {
     id: "4",
-    title: "Advanced React Patterns",
-    excerpt: "Explore advanced patterns and techniques in React development",
+    title: "Học sinh lo âu trước thay đổi xét tuyển đại học",
+    excerpt: "Khoảng 20.000 học sinh, phụ huynh đổ về Hà Nội nghe tư vấn tuyển sinh đại học, không ít nói lo lắng vì chưa rõ phương án của các trường, sau dự kiến thay đổi của Bộ Giáo dục.",
     author: "Admin",
     date: "2023-10-05",
     status: "published",
-    category: "Development",
+    category: "Tuyển sinh",
   },
   {
     id: "5",
-    title: "SEO Best Practices for Blogs",
+    title: "Yêu cầu học sinh giỏi mới được học bán dẫn sẽ gây thiếu nhân lực",
     excerpt: "Learn how to optimize your blog for search engines",
     author: "Admin",
     date: "2023-10-01",
     status: "published",
-    category: "Marketing",
+    category: "Tuyển sinh",
   },
 ]
 
@@ -233,7 +233,7 @@ export function PostsTable() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Filter posts..."
+          placeholder="Tìm bài viết..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
           className="max-w-sm"

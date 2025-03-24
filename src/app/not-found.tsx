@@ -2,7 +2,6 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Header } from "@/components/home/Header"
 
 export default function NotFound() {
   return (

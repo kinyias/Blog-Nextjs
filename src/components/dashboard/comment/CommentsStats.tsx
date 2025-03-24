@@ -1,4 +1,4 @@
-import { MessageSquare, CheckCircle, Clock, AlertTriangle, Trash2 } from "lucide-react"
+import { MessageSquare, CheckCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface CommentStatsProps {

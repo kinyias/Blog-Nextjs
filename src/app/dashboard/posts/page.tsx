@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllTin } from "@/lib/api";
 
 export default function PostsPage() {
-  const { data, isLoading, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['posts'],
     queryFn: getAllTin,
     staleTime: Infinity,

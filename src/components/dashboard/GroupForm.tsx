@@ -28,12 +28,7 @@ const formSchema = z.object({
   isVisible: z.boolean().default(true),
 });
 
-// Sample parent categories data
-const parentCategories = [
-  { id: 'technology', name: 'Technology' },
-  { id: 'lifestyle', name: 'Lifestyle' },
-  { id: 'business', name: 'Business' },
-];
+
 
 interface Category {
   name: string;
