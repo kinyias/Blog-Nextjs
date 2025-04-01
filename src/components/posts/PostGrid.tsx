@@ -20,7 +20,7 @@ const BLOG_POSTS = [
     category: 'Tuyển sinh',
     image:
       'https://i1-vnexpress.vnecdn.net/2025/03/17/233a7831-1742225518-1742225528-1262-5018-1742225666.jpg?w=300&h=180&q=100&dpr=1&fit=crop&s=oPv0by699PoIlJNDpK2mlQ',
-    slug: 'understanding-react-server-components',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ const BLOG_POSTS = [
     category: 'Chân dung',
     image:
       'https://i1-vnexpress.vnecdn.net/2025/03/17/cc549938ea995bc70288-174218868-8512-4541-1742189388.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=tF0i6PJqWQFvMRBmdp48cg',
-    slug: 'mastering-typescript-generics',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 3,
@@ -47,7 +47,7 @@ const BLOG_POSTS = [
     category: 'Du học',
     image:
       'https://i1-vnexpress.vnecdn.net/2025/03/16/480775191-1045845160911812-597-4776-1676-1742091243.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=yaibB_9wpsm26k88aneZaA',
-    slug: 'building-design-system-tailwind',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 4,
@@ -60,7 +60,7 @@ const BLOG_POSTS = [
     category: 'Tuyển sinh',
     image:
       'https://i1-vnexpress.vnecdn.net/2025/03/16/Tu-van-TS-1742089891-7895-1742094674.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=AtS3Bck7H8LVni5eOKyiAg',
-    slug: 'state-management-2023',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 5,
@@ -73,7 +73,7 @@ const BLOG_POSTS = [
     category: 'Tuyển sinh',
     image:
       'https://i1-vnexpress.vnecdn.net/2025/03/15/LeTruongTung-8-1742028397-6243-1742028621.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=W2qXnYtspeB2prmeL_iHmw',
-    slug: 'optimizing-nextjs-applications',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 6,
@@ -86,7 +86,7 @@ const BLOG_POSTS = [
     category: 'AI',
     image:
       'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
-    slug: 'building-full-stack-app-trpc',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 7,
@@ -99,7 +99,7 @@ const BLOG_POSTS = [
     category: 'AI',
     image:
       'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
-    slug: 'building-full-stack-app-trpc',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
   {
     id: 8,
@@ -112,7 +112,7 @@ const BLOG_POSTS = [
     category: 'AI',
     image:
       'https://i1-suckhoe.vnecdn.net/2025/03/20/719d709a-1352-4fd3-b6c6-1e8c47-8072-7557-1742456456.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=57IixFk1a2_SLnd1DkTvyg',
-    slug: 'building-full-stack-app-trpc',
+    slug: 'nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1',
   },
 ];
 

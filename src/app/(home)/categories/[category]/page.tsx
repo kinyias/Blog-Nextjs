@@ -81,45 +81,7 @@ const BLOG_POSTS = [
     slug: 'react-performance-optimization',
     category: 'chandung',
   },
-  {
-    id: 4,
-    views: 5,
-    title: 'Getting Started with Next.js App Router',
-    excerpt:
-      'A comprehensive guide to using the new App Router in Next.js 13 and beyond.',
-    author: 'Emily Johnson',
-    date: 'June 15, 2023',
-    tags: ['Next.js', 'App Router', 'React'],
-    image: '/placeholder.svg?height=400&width=600',
-    slug: 'nextjs-app-router-guide',
-    category: 'nextjs',
-  },
-  {
-    id: 5,
-    views: 5,
-    title: 'Building a Blog with Next.js and MDX',
-    excerpt:
-      'Learn how to create a markdown-powered blog using Next.js and MDX.',
-    author: 'David Kim',
-    date: 'June 20, 2023',
-    tags: ['Next.js', 'MDX', 'Blog'],
-    image: '/placeholder.svg?height=400&width=600',
-    slug: 'nextjs-mdx-blog',
-    category: 'nextjs',
-  },
-  {
-    id: 6,
-    views: 5,
-    title: 'Advanced TypeScript Patterns',
-    excerpt:
-      'Explore advanced TypeScript patterns to make your code more robust and maintainable.',
-    author: 'Maria Garcia',
-    date: 'June 5, 2023',
-    tags: ['TypeScript', 'Patterns', 'Advanced'],
-    image: '/placeholder.svg?height=400&width=600',
-    slug: 'advanced-typescript-patterns',
-    category: 'typescript',
-  },
+  
 ];
 
 export default function CategoryPage() {

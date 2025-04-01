@@ -68,7 +68,7 @@ export function FeaturedPost() {
             </div>
             <div>
               <Button asChild>
-                <Link href="/blog/building-scalable-apis">Đọc thêm</Link>
+                <Link href="/posts/nhieu-tinh-thanh-de-xuat-thi-tot-nghiep-THPT-som-ba-tuan-1">Đọc thêm</Link>
               </Button>
             </div>
           </div>
