@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { format } from 'date-fns';
 import {
   CheckCircle,
   Clock,
   Trash2,
   MoreHorizontal,
-  MessageSquare,
 } from 'lucide-react';
 import {
   Table,
@@ -35,14 +32,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { BinhLuanQueryParams, BinhLuanType } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
-
-// We'll still use CommentStatus for UI purposes
-type CommentStatus = "approved" | "pending" | "spam" | "trash";
 
 interface CommentsTableProps {
   comments: BinhLuanType[];

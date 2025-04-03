@@ -66,7 +66,7 @@ export function CommentsManagement() {
   }, [selectedPostId])
 
   // Fetch comments with pagination
-  const { data:statistics, isLoading: isLoadingStatistics, isError, error } = useQuery({
+  const { data:statistics } = useQuery({
     queryKey: ['binh-luan-statistics'],
     queryFn: getBinhLuanStatistics,
     staleTime: 5 * 60 * 1000, // 5 minutes cache

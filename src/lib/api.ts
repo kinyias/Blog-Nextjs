@@ -65,8 +65,8 @@ export type TinType = {
   solanxem: number;
   tinhot: boolean;
   trangthai: boolean;
-  id_loaitin: number;
-  loai_tin: LoaiTinType;
+  id_loaitin: string;
+  loai_tin?: LoaiTinType;
 };
 export type PaginatedTinResponse = {
   data: TinType[];
