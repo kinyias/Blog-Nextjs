@@ -6,8 +6,6 @@ interface CommentStatsProps {
     all: number
     approved: number
     pending: number
-    spam: number
-    trash: number
   }
 }
 

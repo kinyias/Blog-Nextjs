@@ -35,44 +35,49 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type {
-  Comment,
-  CommentStatus,
-} from '@/components/dashboard/comment/CommentMangement';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { BinhLuanQueryParams, BinhLuanType } from '@/lib/api';
+import { formatDate } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// We'll still use CommentStatus for UI purposes
+type CommentStatus = "approved" | "pending" | "spam" | "trash";
 
 interface CommentsTableProps {
-  comments: Comment[];
-  onStatusChange: (commentId: string, newStatus: CommentStatus) => void;
+  comments: BinhLuanType[];
+  isLoading: boolean;
+  pagination: {
+    currentPage: number;
+    perPage: number;
+    totalItems: number;
+    lastPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  queryParams: BinhLuanQueryParams;
+  setQueryParams: React.Dispatch<React.SetStateAction<BinhLuanQueryParams>>;
+  onStatusChange: (commentId: number, newStatus: boolean) => void;
 }
 
 export function CommentsTable({
   comments,
+  isLoading,
+  pagination,
+  queryParams,
+  setQueryParams,
   onStatusChange,
 }: CommentsTableProps) {
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
+  const [selectedComment, setSelectedComment] = useState<BinhLuanType | null>(null);
 
-  const handleStatusChange = (commentId: string, newStatus: CommentStatus) => {
+  const handleStatusChange = (commentId: number, newStatus: boolean) => {
     onStatusChange(commentId, newStatus);
     toast(`The comment has been marked as ${newStatus}.`);
   };
 
-  //   const getStatusIcon = (status: CommentStatus) => {
-  //     switch (status) {
-  //       case "approved":
-  //         return <CheckCircle className="h-4 w-4 text-green-500" />
-  //       case "pending":
-  //         return <Clock className="h-4 w-4 text-yellow-500" />
-  //       case "spam":
-  //         return <AlertTriangle className="h-4 w-4 text-red-500" />
-  //       case "trash":
-  //         return <Trash2 className="h-4 w-4 text-gray-500" />
-  //     }
-  //   }
-
-  const getStatusBadge = (status: CommentStatus) => {
+  const getStatusBadge = (status: boolean) => {
     switch (status) {
-      case 'approved':
+      case true:
         return (
           <Badge
             variant="outline"
@@ -81,164 +86,215 @@ export function CommentsTable({
             Đã duyệt
           </Badge>
         );
-      case 'pending':
+      case false:
         return (
           <Badge
             variant="outline"
             className="bg-yellow-50 text-yellow-700 border-yellow-200"
           >
             Đang chờ
-          </Badge>
-        );
-      case 'spam':
-        return (
-          <Badge
-            variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200"
-          >
-            Đang chờ
-          </Badge>
-        );
-      case 'trash':
-        return (
-          <Badge
-            variant="outline"
-            className="bg-gray-50 text-gray-700 border-gray-200"
-          >
-            Trash
           </Badge>
         );
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, "MMM d, yyyy 'at' h:mm a");
-  };
 
   return (
     <>
-      <div className="relative overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[250px]">Người bình luận</TableHead>
-              <TableHead>Bình luận</TableHead>
-              <TableHead>Bình luận về</TableHead>
-              <TableHead className="w-[120px]">Trạng thái</TableHead>
-              <TableHead className="w-[180px]">Ngày</TableHead>
-              <TableHead className="w-[80px]">Hành động</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {comments.length === 0 ? (
+      <div className="space-y-4">
+        <div className="relative overflow-x-auto rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No comments found.
-                </TableCell>
+                <TableHead className="w-[250px]">Người bình luận</TableHead>
+                <TableHead>Bình luận</TableHead>
+                <TableHead>Bình luận về</TableHead>
+                <TableHead className="w-[120px]">Trạng thái</TableHead>
+                <TableHead className="w-[180px]">Ngày</TableHead>
+                <TableHead className="w-[80px]">Hành động</TableHead>
               </TableRow>
-            ) : (
-              comments.map((comment) => (
-                <TableRow key={comment.id} className="group">
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <div className="font-medium">{comment.author.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {comment.author.email}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: pagination.perPage }).map((_, index) => (
+                  <TableRow key={`skeleton-${index}`}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[120px]" />
+                          <Skeleton className="h-3 w-[150px]" />
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="line-clamp-2 text-sm">
-                      {comment.replies && comment.replies.length > 0 && (
-                        <Badge
-                          variant="outline"
-                          className="mr-2 bg-blue-50 text-blue-700 border-blue-200"
-                        >
-                          <MessageSquare className="h-3 w-3 mr-1" />
-                          {comment.replies.length}
-                        </Badge>
-                      )}
-                      {comment.content}
-                    </div>
-                    <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="h-auto p-0 text-xs"
-                        onClick={() => setSelectedComment(comment)}
-                      >
-                        Xem chi tiết
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/posts/${comment.post.id}`}
-                      className="text-sm text-blue-600 hover:underline"
-                    >
-                      {comment.post.title}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(comment.status)}</TableCell>
-                  <TableCell className="text-sm">
-                    {formatDate(comment.date)}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => setSelectedComment(comment)}
-                        >
-                          Xem chi tiết
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        {comment.status !== 'approved' && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(comment.id, 'approved')
-                            }
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                            Duyệt
-                          </DropdownMenuItem>
-                        )}
-                        {comment.status !== 'pending' && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(comment.id, 'pending')
-                            }
-                          >
-                            <Clock className="h-4 w-4 mr-2 text-yellow-500" />
-                            Đánh dấu chưa duyệt
-                          </DropdownMenuItem>
-                        )}
-                        {comment.status !== 'trash' && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(comment.id, 'trash')
-                            }
-                          >
-                            <Trash2 className="h-4 w-4 mr-2 text-gray-500" />
-                            Xoá
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-full max-w-[300px]" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-[180px]" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-[80px]" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-[120px]" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : comments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Không tìm thấy bình luận nào.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                comments.map((comment) => (
+                  <TableRow key={comment.id_binhluan}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                            <span className="text-sm font-medium">
+                              {comment.email.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                        
+                          <div className="text-sm text-muted-foreground">
+                            {comment.email}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="line-clamp-2">{comment.noidung}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/dashboard/posts/${comment.id_tin}`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        {comment.tin?.tieude || `Bài viết #${comment.id_tin}`}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(comment.trangthai)}</TableCell>
+                    <TableCell>{formatDate(comment.thoigian)}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => setSelectedComment(comment)}
+                          >
+                            Xem chi tiết
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          {!comment.trangthai && (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleStatusChange(comment.id_binhluan, true)
+                              }
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                              Duyệt
+                            </DropdownMenuItem>
+                          )}
+                          {comment.trangthai && (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleStatusChange(comment.id_binhluan, false)
+                              }
+                            >
+                              <Clock className="h-4 w-4 mr-2 text-yellow-500" />
+                              Đánh dấu chưa duyệt
+                            </DropdownMenuItem>
+                          )}
+                          {/* {comment.trangthai !== 'trash' && ( */}
+                            <DropdownMenuItem
+                              // onClick={() =>
+                              //   handleStatusChange(comment.id_binhluan, 'trash')
+                              // }
+                            >
+                              <Trash2 className="h-4 w-4 mr-2 text-gray-500" />
+                              Xoá
+                            </DropdownMenuItem>
+                          {/* )} */}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex items-center justify-between px-2">
+          {isLoading ? (
+            <div className="flex items-center justify-between w-full">
+              <Skeleton className="h-8 w-[150px]" />
+              <Skeleton className="h-8 w-[250px]" />
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium">Số hàng mỗi trang</p>
+                <select
+                  value={queryParams.limit}
+                  onChange={(e) => {
+                    const newLimit = Number(e.target.value);
+                    setQueryParams(prev => ({ ...prev, limit: newLimit, page: 1 }));
+                  }}
+                  className="h-8 w-[70px] rounded-md border border-input bg-background px-2 py-1 text-sm"
+                >
+                  {[5, 10, 20, 30, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 text-sm text-muted-foreground">
+                  Trang {pagination.currentPage} trên {pagination.lastPage} 
+                  (Tổng {pagination.totalItems} bình luận)
+                </div>
+                <div className="space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQueryParams(prev => ({ ...prev, page: prev.page! - 1 }));
+                    }}
+                    disabled={!pagination.hasPreviousPage}
+                  >
+                    Trước
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQueryParams(prev => ({ ...prev, page: prev.page! + 1 }));
+                    }}
+                    disabled={!pagination.hasNextPage}
+                  >
+                    Sau
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <Dialog
@@ -250,154 +306,78 @@ export function CommentsTable({
             <DialogHeader>
               <DialogTitle>Chi tiết bình luận</DialogTitle>
               <DialogDescription>
-                Đã gửi {formatDate(selectedComment.date)}
+                Đã gửi {formatDate(selectedComment.thoigian)}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  {selectedComment.author.avatar ? (
-                    <Image
-                      src={selectedComment.author.avatar || '/placeholder.svg'}
-                      alt={selectedComment.author.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                      <span className="text-lg font-medium">
-                        {selectedComment.author.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+                  <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-lg font-medium">
+                      {selectedComment.email.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
                 </div>
-
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium">
-                        {selectedComment.author.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedComment.author.email}
-                      </p>
+                      <h3 className="font-medium">{selectedComment.email}</h3>
+                      
                     </div>
-                    <div>{getStatusBadge(selectedComment.status)}</div>
+                    <div>{getStatusBadge(selectedComment.trangthai)}</div>
                   </div>
-
-                  <div className="mt-4 p-4 bg-muted rounded-md">
-                    <p className="whitespace-pre-wrap">
-                      {selectedComment.content}
-                    </p>
+                  <div className="mt-4 p-4 rounded-md bg-muted">
+                    <p>{selectedComment.noidung}</p>
                   </div>
-
-                  <div className="mt-4 text-sm">
-                    <p>
-                      In response to:{' '}
+                  <div className="mt-4">
+                    <p className="text-sm">
+                      Bình luận về:{' '}
                       <Link
-                        href={`/dashboard/posts/${selectedComment.post.id}`}
+                        href={`/dashboard/posts/${selectedComment.id_tin}`}
                         className="text-blue-600 hover:underline"
                       >
-                        {selectedComment.post.title}
+                        {selectedComment.tin?.tieude || `Bài viết #${selectedComment.id_tin}`}
                       </Link>
                     </p>
                   </div>
                 </div>
               </div>
 
-              {selectedComment.replies &&
-                selectedComment.replies.length > 0 && (
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium mb-4">
-                      Replies ({selectedComment.replies.length})
-                    </h4>
-                    <div className="space-y-4">
-                      {selectedComment.replies.map((reply) => (
-                        <div
-                          key={reply.id}
-                          className="flex items-start gap-4 ml-8"
-                        >
-                          <div className="flex-shrink-0">
-                            {reply.author.avatar ? (
-                              <Image
-                                src={reply.author.avatar || '/placeholder.svg'}
-                                alt={reply.author.name}
-                                width={40}
-                                height={40}
-                                className="rounded-full"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                                <span className="text-sm font-medium">
-                                  {reply.author.name.charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h3 className="font-medium">
-                                  {reply.author.name}
-                                </h3>
-                                <p className="text-xs text-muted-foreground">
-                                  {formatDate(reply.date)}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="mt-2 p-3 bg-muted rounded-md">
-                              <p className="text-sm whitespace-pre-wrap">
-                                {reply.content}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-              <div className="flex justify-between">
-                <div className="space-x-2">
-                  {selectedComment.status !== 'approved' && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-green-600 cursor-pointer"
-                      onClick={() => {
-                        handleStatusChange(selectedComment.id, 'approved');
-                        setSelectedComment(null);
-                      }}
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Duyệt
-                    </Button>
-                  )}
+              <div className="flex justify-end gap-2">
+                {!selectedComment.trangthai && (
                   <Button
-                    size="sm"
+                    onClick={() =>
+                      handleStatusChange(selectedComment.id_binhluan, true)
+                    }
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Duyệt
+                  </Button>
+                )}
+                {selectedComment.trangthai && (
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      handleStatusChange(selectedComment.id_binhluan, false)
+                    }
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Đánh dấu chưa duyệt
+                  </Button>
+                )}
+                {/* {selectedComment.trangthai !== 'trash' && ( */}
+                  <Button
                     variant="destructive"
-                    className=" cursor-pointer"
-                    onClick={() => {
-                      handleStatusChange(selectedComment.id, 'trash');
-                      setSelectedComment(null);
-                    }}
+                    // onClick={() =>
+                    //   handleStatusChange(selectedComment.id_binhluan, 'trash')
+                    // }
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Xoá
                   </Button>
-                </div>
-                <Button
-                  size="sm"
-                  className="cursor-pointer"
-                  variant="default"
-                  onClick={() => setSelectedComment(null)}
-                >
-                  Đóng
-                </Button>
+                {/* )} */}
               </div>
             </div>
           </DialogContent>
