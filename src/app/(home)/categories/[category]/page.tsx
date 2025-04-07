@@ -4,7 +4,6 @@ import { notFound, useParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { PostCard } from '@/components/posts/PostCard';
 
 // Mock data for categories
 const CATEGORIES = [
@@ -120,9 +119,9 @@ export default function CategoryPage() {
 
         {posts.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
+            {/* {posts.map((post) => (
               <PostCard key={post.id} post={post} />
-            ))}
+            ))} */}
           </div>
         ) : (
           <div className="rounded-lg border border-dashed p-8 text-center">
