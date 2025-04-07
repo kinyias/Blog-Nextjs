@@ -12,7 +12,7 @@ import {
   type ColumnFiltersState,
   getFilteredRowModel,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Eye, EyeOff, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, Eye, EyeOff, Loader2, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -34,9 +34,11 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { TinType, TinQueryParams } from '@/lib/api';
+import { TinType, TinQueryParams, deleteTin } from '@/lib/api';
 import { useTinPagination } from '@/hooks/usePagination';
 import { formatDate } from '@/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function PostsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -50,7 +52,85 @@ export function PostsTable() {
     sortBy: 'ngaydangtin',
     sortOrder: 'desc',
   });
+  // Add this state for bulk delete dialog
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<TinType | null>(null);
 
+  const queryClient = useQueryClient();
+  
+  // Add this state to track refetching state
+  const [isRefetching, setIsRefetching] = useState(false);
+  
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteTin(id),
+    onSuccess: () => {
+      // Set refetching state to true before invalidating queries
+      setIsRefetching(true);
+      // Invalidate and refetch the tin list query to update the UI
+      queryClient.invalidateQueries({ queryKey: ['tin'] })
+        .then(() => {
+          // Set a small timeout to ensure the UI shows the refetching state
+          setTimeout(() => {
+            setIsRefetching(false);
+          }, 800);
+        });
+    },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+      toast.error('Có lỗi xảy ra khi xóa tin tức. Vui lòng thử lại sau.');
+    }
+  });
+  
+  // Bulk delete mutation
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (ids: number[]) => Promise.all(ids.map(id => deleteTin(id))),
+    onSuccess: () => {
+      setIsRefetching(true);
+      queryClient.invalidateQueries({ queryKey: ['tin'] })
+        .then(() => {
+          setTimeout(() => {
+            setIsRefetching(false);
+          }, 800);
+        });
+      setRowSelection({});
+    },
+    onError: (error) => {
+      console.error('Error deleting multiple posts:', error);
+      toast.error('Có lỗi xảy ra khi xóa tin tức. Vui lòng thử lại sau.');
+    }
+  });
+
+  const handleDeletePost = (post: TinType) => {
+    deleteMutation.mutate(post.id_tin, {
+      onSuccess: () => {
+        toast.success(`Tin tức "${post.tieude}" đã được xóa thành công.`, {
+          style: {
+            backgroundColor: '#16a34a',
+            color: '#ffffff',
+          },
+        });
+        setOpen(false);
+      }
+    });
+  };
+  
+  const handleBulkDelete = () => {
+    const selectedIds = Object.keys(rowSelection).map(Number);
+    
+    bulkDeleteMutation.mutate(selectedIds, {
+      onSuccess: () => {
+        toast.success(`${selectedIds.length} tin tức đã được xóa thành công.`, {
+          style: {
+            backgroundColor: '#16a34a',
+            color: '#ffffff',
+          },
+        });
+        setBulkDeleteOpen(false);
+      }
+    });
+  };
   // Update search with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -210,6 +290,7 @@ export function PostsTable() {
         const post = row.original;
 
         return (
+          <Dialog open={open && postToDelete?.id_tin === post.id_tin} onOpenChange={setOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -228,14 +309,33 @@ export function PostsTable() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  toast('The post has been deleted successfully.');
+                  setPostToDelete(post);
+                  setOpen(true);
                 }}
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive className='cursor-pointer'"
               >
-                Delete
+                Xoá
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Xác nhận xóa</DialogTitle>
+              <DialogDescription>
+                Bạn có chắc chắn muốn xóa tin tức &quot;{post.tieude}&quot;? Hành động này không thể hoàn tác.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button className='cursor-pointer' variant="outline" onClick={() => setOpen(false)}>
+                Hủy
+              </Button>
+              <Button className='cursor-pointer' variant="destructive" onClick={() => handleDeletePost(post)}>
+              {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deleteMutation.isPending ? 'Đang xoá...' : 'Xoá'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         );
       },
     },
@@ -275,18 +375,30 @@ export function PostsTable() {
           className="max-w-sm"
         />
         {Object.keys(rowSelection).length > 0 && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              toast(
-                `${Object.keys(rowSelection).length} posts have been deleted.`
-              );
-              setRowSelection({});
-            }}
-          >
-            Xoá
-          </Button>
+          <Dialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm">
+                Xoá
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Xác nhận xóa hàng loạt</DialogTitle>
+                <DialogDescription>
+                  Bạn có chắc chắn muốn xóa {Object.keys(rowSelection).length} tin tức đã chọn? Hành động này không thể
+                  hoàn tác.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setBulkDeleteOpen(false)}>
+                  Hủy
+                </Button>
+                <Button variant="destructive" onClick={handleBulkDelete}>
+                  Xóa
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
       <div className="rounded-md border">
@@ -310,7 +422,7 @@ export function PostsTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {isLoading || isRefetching ? (
               Array.from({ length: pagination.perPage }).map((_, index) => (
                 <TableRow key={`skeleton-${index}`}>
                   {Array.from({ length: columns.length }).map((_, cellIndex) => (
@@ -357,61 +469,61 @@ export function PostsTable() {
         </Table>
       </div>
       <div className="flex items-center justify-between px-2">
-        {isLoading ? (
-          <div className="flex items-center justify-between w-full">
-            <Skeleton className="h-8 w-[150px]" />
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">Số hàng mỗi trang</p>
-              <select
-                value={queryParams.limit}
-                onChange={(e) => {
-                  const newLimit = Number(e.target.value);
-                  setQueryParams(prev => ({ ...prev, limit: newLimit, page: 1 }));
-                }}
-                className="h-8 w-[70px] rounded-md border border-input bg-background px-2 py-1 text-sm"
-              >
-                {[5, 10, 20, 30, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
-                  </option>
-                ))}
-              </select>
+          {isLoading || isRefetching ? (
+            <div className="flex items-center justify-between w-full">
+              <Skeleton className="h-8 w-[150px]" />
+              <Skeleton className="h-8 w-[250px]" />
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 text-sm text-muted-foreground">
-                Trang {pagination.currentPage} trên {pagination.lastPage} 
-                (Tổng {pagination.totalItems} bài viết)
-              </div>
-              <div className="space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setQueryParams(prev => ({ ...prev, page: prev.page! - 1 }));
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium">Số hàng mỗi trang</p>
+                <select
+                  value={queryParams.limit}
+                  onChange={(e) => {
+                    const newLimit = Number(e.target.value);
+                    setQueryParams(prev => ({ ...prev, limit: newLimit, page: 1 }));
                   }}
-                  disabled={!pagination.hasPreviousPage}
+                  className="h-8 w-[70px] rounded-md border border-input bg-background px-2 py-1 text-sm"
                 >
-                  Trước
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setQueryParams(prev => ({ ...prev, page: prev.page! + 1 }));
-                  }}
-                  disabled={!pagination.hasNextPage}
-                >
-                  Sau
-                </Button>
+                  {[5, 10, 20, 30, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      {pageSize}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 text-sm text-muted-foreground">
+                  Trang {pagination.currentPage} trên {pagination.lastPage} 
+                  (Tổng {pagination.totalItems} bài viết)
+                </div>
+                <div className="space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQueryParams(prev => ({ ...prev, page: prev.page! - 1 }));
+                    }}
+                    disabled={!pagination.hasPreviousPage}
+                  >
+                    Trước
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setQueryParams(prev => ({ ...prev, page: prev.page! + 1 }));
+                    }}
+                    disabled={!pagination.hasNextPage}
+                  >
+                    Sau
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
     </div>
   );
 }

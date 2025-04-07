@@ -122,7 +122,6 @@ export function PostForm({ post }: { post?: TinType }) {
         tacgia: 'Admin', 
         solanxem: post?.solanxem || 0
       };
-      console.log(tinData)
       if (post?.id_tin) {
         // Update existing post
         await updateMutation.mutateAsync({ 
@@ -294,6 +293,8 @@ export function PostForm({ post }: { post?: TinType }) {
                                 src={field.value} 
                                 alt="Featured image preview" 
                                 className="object-cover w-full h-full"
+                                width={500}
+                                height={300}
                               />
                               <Button
                                 type="button"

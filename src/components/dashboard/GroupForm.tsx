@@ -20,31 +20,45 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { NhomTinType, createNhomTin, updateNhomTin } from '@/lib/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Category name must be at least 2 characters.',
+  ten_nhomtin: z.string().min(2, {
+    message: 'Tên nhóm tin phải có ít nhất 2 ký tự.',
   }),
-  isVisible: z.boolean().default(true),
+  trangthai: z.boolean().default(true),
 });
 
-
-
-interface Category {
-  name: string;
-  isVisible: boolean;
-  parentCategory: string;
-}
-
-export function GroupForm({ category }: { category?: Category }) {
+export function GroupForm({ nhomTin }: { nhomTin?: NhomTinType }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Create mutation for creating a new NhomTin
+  const createMutation = useMutation({
+    mutationFn: (data: Omit<NhomTinType, 'id_nhomtin'>) => createNhomTin(data),
+    onSuccess: () => {
+      // Invalidate and refetch the nhomTin list query
+      queryClient.invalidateQueries({ queryKey: ['nhomTin'] });
+    },
+  });
+
+  // Update mutation for updating an existing NhomTin
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<NhomTinType> }) => 
+      updateNhomTin(id, data),
+    onSuccess: () => {
+      // Invalidate and refetch the nhomTin list query
+      queryClient.invalidateQueries({ queryKey: ['nhomTin'] });
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category?.name || '',
-      isVisible: category?.isVisible !== false,
+      ten_nhomtin: nhomTin?.ten_nhomtin || '',
+      trangthai: nhomTin?.trangthai ?? true,
     },
   });
 
@@ -52,26 +66,45 @@ export function GroupForm({ category }: { category?: Category }) {
     setIsLoading(true);
 
     try {
-      // Here you would normally save the category to your backend
-      console.log(values);
+      const nhomTinData = {
+        ten_nhomtin: values.ten_nhomtin,
+        trangthai: values.trangthai,
+      };
 
-      // Simulate saving
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (nhomTin?.id_nhomtin) {
+        // Update existing group
+        await updateMutation.mutateAsync({ 
+          id: nhomTin.id_nhomtin, 
+          data: nhomTinData
+        });
+        toast.success(
+          `Nhóm tin "${values.ten_nhomtin}" đã được cập nhật thành công.`,
+          {
+            style: {
+              backgroundColor: '#16a34a',
+              color: '#ffffff',
+            },
+          }
+        );
+      } else {
+        // Create new group
+        await createMutation.mutateAsync(nhomTinData as unknown as Omit<NhomTinType, 'id_nhomtin'>);
+        toast.success(
+          `Nhóm tin "${values.ten_nhomtin}" đã được tạo thành công.`,
+          {
+            style: {
+              backgroundColor: '#16a34a',
+              color: '#ffffff',
+            },
+          }
+        );
+      }
 
-      toast.success(
-        `Your category "${values.name}" has been saved successfully.`,
-        {
-          style: {
-            backgroundColor: '#16a34a', // Màu nền
-            color: '#ffffff', // Màu chữ
-          },
-        }
-      );
-
-      router.push('/dashboard/categories');
+      // Redirect to groups page
+      router.push('/dashboard/groups');
     } catch (error) {
-      console.error('Error saving category:', error);
-      toast.error('There was an error saving your category. Please try again.');
+      console.error('Error saving group:', error);
+      toast.error('Đã xảy ra lỗi khi lưu nhóm tin. Vui lòng thử lại sau.');
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +117,7 @@ export function GroupForm({ category }: { category?: Category }) {
           <CardContent className="p-6 space-y-6">
             <FormField
               control={form.control}
-              name="name"
+              name="ten_nhomtin"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tên nhóm tin</FormLabel>
@@ -102,7 +135,7 @@ export function GroupForm({ category }: { category?: Category }) {
             <div className="space-y-4 w-50">
               <FormField
                 control={form.control}
-                name="isVisible"
+                name="trangthai"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
@@ -125,7 +158,7 @@ export function GroupForm({ category }: { category?: Category }) {
         <div className="flex gap-2">
           <Button className='cursor-pointer' variant={'success'} type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? 'Saving...' : 'Lưu'}
+            {isLoading ? 'Đang lưu...' : 'Lưu'}
           </Button>
           <Button
             className='cursor-pointer'

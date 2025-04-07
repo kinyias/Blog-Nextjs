@@ -2,7 +2,7 @@ import API from './axios-client';
 export type NhomTinType = {
   id_nhomtin: number;
   ten_nhomtin: string;
-  trangthai: string;
+  trangthai: boolean;
   loai_tin: LoaiTinType[];
 };
 
@@ -29,7 +29,7 @@ export type NhomTinQueryParams = {
 export type LoaiTinType = {
   id_loaitin: string;
   ten_loaitin: string;
-  trangthai: string;
+  trangthai: boolean;
   id_nhomtin: number;
   tin: TinType[];
 };
@@ -193,7 +193,7 @@ export const getLoaiTinWithPagination = async (
   });
   return response.data;
 };
-export const createLoaiTin = async (data: Omit<LoaiTinType, 'id_loattin'>): Promise<LoaiTinType> => {
+export const createLoaiTin = async (data: LoaiTinType): Promise<LoaiTinType> => {
   const response = await API.post<LoaiTinType>('/loai-tin', data);
   return response.data;
 };
@@ -203,7 +203,7 @@ export const updateLoaiTin = async (id: string, data: Partial<LoaiTinType>): Pro
   return response.data;
 };
 
-export const deleteLoaiTin = async (id: number): Promise<void> => {
+export const deleteLoaiTin = async (id: string): Promise<void> => {
   await API.delete(`/loai-tin/${id}`);
 };
 // Tin routes
