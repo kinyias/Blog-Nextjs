@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from 'sonner'
-import { LoaiTinType, LoaiTinQueryParams, updateLoaiTin, deleteLoaiTin } from "@/lib/api"
+import { LoaiTinType, LoaiTinQueryParams, deleteLoaiTin, updateLoaiTinStatus } from "@/lib/api"
 import { usePaginatedLoaiTin } from "@/hooks/usePagination"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,7 +36,6 @@ export function CategoriesTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
-  const [hiddenCategories, setHiddenCategories] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [queryParams, setQueryParams] = useState<LoaiTinQueryParams>({
     page: 1,
@@ -152,38 +151,46 @@ export function CategoriesTable() {
     hasPreviousPage: false,
   }
 
-  const toggleVisibility = async (id: string) => {
-    try {
-      // Find the category to toggle
-      const category = categories.find((cat) => cat.id_loaitin === id)
-      if (!category) return
-
-      // Toggle visibility in UI
-      setHiddenCategories((prev) =>
-        prev.includes(id) ? prev.filter((categoryId) => categoryId !== id) : [...prev, id]
-      )
-
-      // Update the visibility in the database
-      const newStatus = hiddenCategories.includes(id)
-      await updateLoaiTin(id, { trangthai: newStatus })
-      
-      // Show success message
-      toast.success(`Loại tin tức "${category.ten_loaitin}" đã được ${
-        hiddenCategories.includes(id) ? "hiện" : "ẩn"
-      }`, {
-        style: {
-          backgroundColor: "#16a34a",
-          color: "#ffffff",
+  const toggleVisibility = (category: LoaiTinType) => {
+    const newStatus = !category.trangthai;
+    
+    updateStatusMutation.mutate(
+      { id: category.id_loaitin, status: newStatus },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Loại tin "${category.ten_loaitin}" đã được ${newStatus ? 'hiện' : 'ẩn'}.`,
+            {
+              style: {
+                backgroundColor: '#16a34a',
+                color: '#ffffff',
+              },
+            }
+          );
         }
-      })
-      
-      // Invalidate queries to refresh data
+      }
+    );
+  };
+
+
+  // Add status update mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: boolean }) => 
+      updateLoaiTinStatus(id, { trangthai: status }),
+    onSuccess: () => {
+      setIsRefetching(true);
       queryClient.invalidateQueries({ queryKey: ['paginated-loai-tin'] })
-    } catch (error) {
-      console.error("Error toggling category visibility:", error)
-      toast.error("Không thể thay đổi trạng thái loại tin tức")
+        .then(() => {
+          setTimeout(() => {
+            setIsRefetching(false);
+          }, 800);
+        });
+    },
+    onError: (error) => {
+      console.error('Error updating category status:', error);
+      toast.error('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại sau.');
     }
-  }
+  });
 
   const columns: ColumnDef<LoaiTinType>[] = [
     {
@@ -240,20 +247,29 @@ export function CategoriesTable() {
       id: "status",
       header: "Trạng thái",
       cell: ({ row }) => {
-        const category = row.original
-        const isHidden = !category.trangthai
-
+        const category = row.original;
+        const isHidden = !category.trangthai;
+        const isPending = updateStatusMutation.isPending && 
+                         updateStatusMutation.variables?.id === category.id_loaitin;
+        
         return (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => toggleVisibility(category.id_loaitin)}
+            onClick={() => toggleVisibility(category)}
+            disabled={isPending}
             className={isHidden ? "text-muted-foreground" : "text-primary"}
           >
-            {isHidden ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-            {isHidden ? "Ẩn" : "Hiện"}
+            {isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : isHidden ? (
+              <EyeOff className="h-4 w-4 mr-2" />
+            ) : (
+              <Eye className="h-4 w-4 mr-2" />
+            )}
+            {isPending ? 'Đang cập nhật...' : isHidden ? 'Ẩn' : 'Hiện'}
           </Button>
-        )
+        );
       },
     },
     {

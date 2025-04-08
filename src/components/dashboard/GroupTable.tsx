@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from 'sonner'
-import { NhomTinType, NhomTinQueryParams, updateNhomTin, deleteNhomTin } from "@/lib/api"
+import { NhomTinType, NhomTinQueryParams, deleteNhomTin, updateNhomTinStatus } from "@/lib/api"
 import { usePaginatedNhomTin } from "@/hooks/usePagination"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,7 +36,6 @@ export function GroupsTable() {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
-  const [hiddenGroups, setHiddenGroups] = useState<number[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [queryParams, setQueryParams] = useState<NhomTinQueryParams>({
     page: 1,
@@ -152,38 +151,45 @@ export function GroupsTable() {
     hasPreviousPage: false,
   }
 
-  const toggleVisibility = async (id: number) => {
-    try {
-      // Find the group to toggle
-      const group = groups.find((g) => g.id_nhomtin === id)
-      if (!group) return
-
-      // Toggle visibility in UI
-      setHiddenGroups((prev) =>
-        prev.includes(id) ? prev.filter((groupId) => groupId !== id) : [...prev, id]
-      )
-
-      // Update the visibility in the database
-      const newStatus = hiddenGroups.includes(id)
-      await updateNhomTin(id, { trangthai: newStatus })
-      
-      // Show success message
-      toast.success(`Nhóm tin tức "${group.ten_nhomtin}" đã được ${
-        hiddenGroups.includes(id) ? "hiện" : "ẩn"
-      }`, {
-        style: {
-          backgroundColor: "#16a34a",
-          color: "#ffffff",
-        }
-      })
-      
-      // Invalidate queries to refresh data
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: boolean }) => 
+      updateNhomTinStatus(id, { trangthai: status }),
+    onSuccess: () => {
+      setIsRefetching(true);
       queryClient.invalidateQueries({ queryKey: ['paginated-nhom-tin'] })
-    } catch (error) {
-      console.error("Error toggling group visibility:", error)
-      toast.error("Không thể thay đổi trạng thái nhóm tin tức")
+        .then(() => {
+          setTimeout(() => {
+            setIsRefetching(false);
+          }, 800);
+        });
+    },
+    onError: (error) => {
+      console.error('Error updating group status:', error);
+      toast.error('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại sau.');
     }
-  }
+  });
+
+  // Replace toggleVisibility function with this updated version
+  const toggleVisibility = (group: NhomTinType) => {
+    const newStatus = !group.trangthai;
+    
+    updateStatusMutation.mutate(
+      { id: group.id_nhomtin, status: newStatus },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Nhóm tin "${group.ten_nhomtin}" đã được ${newStatus ? 'hiện' : 'ẩn'}.`,
+            {
+              style: {
+                backgroundColor: '#16a34a',
+                color: '#ffffff',
+              },
+            }
+          );
+        }
+      }
+    );
+  };
 
   const columns: ColumnDef<NhomTinType>[] = [
     {
@@ -240,20 +246,29 @@ export function GroupsTable() {
       id: "status",
       header: "Trạng thái",
       cell: ({ row }) => {
-        const group = row.original
-        const isHidden = !group.trangthai 
-
+        const group = row.original;
+        const isHidden = !group.trangthai;
+        const isPending = updateStatusMutation.isPending && 
+                         updateStatusMutation.variables?.id === group.id_nhomtin;
+        
         return (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => toggleVisibility(group.id_nhomtin)}
+            onClick={() => toggleVisibility(group)}
+            disabled={isPending}
             className={isHidden ? "text-muted-foreground" : "text-primary"}
           >
-            {isHidden ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-            {isHidden ? "Ẩn" : "Hiện"}
+            {isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : isHidden ? (
+              <EyeOff className="h-4 w-4 mr-2" />
+            ) : (
+              <Eye className="h-4 w-4 mr-2" />
+            )}
+            {isPending ? 'Đang cập nhật...' : isHidden ? 'Ẩn' : 'Hiện'}
           </Button>
-        )
+        );
       },
     },
     {

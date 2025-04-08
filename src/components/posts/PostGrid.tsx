@@ -16,7 +16,7 @@ export function PostGrid() {
     limit: 6,
     sortBy: 'ngaydangtin',
     sortOrder: 'desc',
-    // trangthai: true,
+    trangthai: true,
   });
   
   // Store all loaded posts

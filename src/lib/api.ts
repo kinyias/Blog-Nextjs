@@ -87,6 +87,7 @@ export type TinQueryParams = {
   sortOrder?: 'asc' | 'desc';
   search?: string;
   tinhot?: boolean;
+  trangthai?: boolean;
   id_loaitin?: number;
 };
 export type BinhLuanType = {
@@ -123,6 +124,16 @@ export type BinhLuanStatisticsType = {
   total: number;
   approved: number;
   pending: number;
+};
+
+export type TinStatusUpdateType = {
+  trangthai: boolean;
+};
+export type NhomTinStatusUpdateType = {
+  trangthai: boolean;
+};
+export type LoaiTinStatusUpdateType = {
+  trangthai: boolean;
 };
 // Nhom_tin routes
 export const getNhomTinWithPagination = async (
@@ -165,7 +176,13 @@ export const updateNhomTin = async (id: number, data: Partial<NhomTinType>): Pro
 export const deleteNhomTin = async (id: number): Promise<void> => {
   await API.delete(`/nhom-tin/${id}`);
 };
-
+export const updateNhomTinStatus = async (
+  id: number,
+  status: NhomTinStatusUpdateType
+): Promise<NhomTinType> => {
+  const response = await API.patch<NhomTinType>(`/nhom-tin/${id}/status`, status);
+  return response.data;
+};
 // Loai_tin routes
 export const getAllLoaiTin = async (): Promise<LoaiTinType[]> => {
   const response = await API.get<LoaiTinType[]>('/loai-tin');
@@ -206,6 +223,13 @@ export const updateLoaiTin = async (id: string, data: Partial<LoaiTinType>): Pro
 export const deleteLoaiTin = async (id: string): Promise<void> => {
   await API.delete(`/loai-tin/${id}`);
 };
+export const updateLoaiTinStatus = async (
+  id: string,
+  status: LoaiTinStatusUpdateType
+): Promise<LoaiTinType> => {
+  const response = await API.patch<LoaiTinType>(`/loai-tin/${id}/status`, status);
+  return response.data;
+};
 // Tin routes
 export const getAllTin = async (): Promise<TinType[]> => {
   const response = await API.get<TinType[]>('/tin');
@@ -234,6 +258,14 @@ export const updateTin = async (id: number, data: Partial<TinType>): Promise<Tin
 
 export const deleteTin = async (id: number): Promise<void> => {
   await API.delete(`/tin/${id}`);
+};
+
+export const updateTinStatus = async (
+  id: number,
+  status: TinStatusUpdateType
+): Promise<TinType> => {
+  const response = await API.patch<TinType>(`/tin/${id}/status`, status);
+  return response.data;
 };
 export const getBinhLuanWithPagination = async (
   params: BinhLuanQueryParams

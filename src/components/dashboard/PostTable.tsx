@@ -34,7 +34,7 @@ import {
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { TinType, TinQueryParams, deleteTin } from '@/lib/api';
+import { TinType, TinQueryParams, deleteTin, updateTinStatus } from '@/lib/api';
 import { useTinPagination } from '@/hooks/usePagination';
 import { formatDate } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -44,7 +44,6 @@ export function PostsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
-  const [hiddenPosts, setHiddenPosts] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [queryParams, setQueryParams] = useState<TinQueryParams>({
     page: 1,
@@ -163,24 +162,45 @@ export function PostsTable() {
     hasPreviousPage: false,
   };
 
-  const toggleVisibility = (id: number) => {
-    setHiddenPosts((prev) =>
-      prev.includes(id) ? prev.filter((postId) => postId !== id) : [...prev, id]
-    );
-
-    const post = posts.find((cat) => cat.id_tin === id);
-    toast.success(
-      `Tin tức "${post?.tieude}" đã được ${
-        hiddenPosts.includes(id) ? 'hiện' : 'ẩn'
-      }`,
+  const toggleVisibility = (post: TinType) => {
+    const newStatus = !post.trangthai;
+    
+    updateStatusMutation.mutate(
+      { id: post.id_tin, status: newStatus },
       {
-        style: {
-          backgroundColor: '#16a34a', // Màu nền
-          color: '#ffffff', // Màu chữ
-        },
+        onSuccess: () => {
+          toast.success(
+            `Tin tức "${post.tieude}" đã được ${newStatus ? 'hiện' : 'ẩn'}.`,
+            {
+              style: {
+                backgroundColor: '#16a34a',
+                color: '#ffffff',
+              },
+            }
+          );
+        }
       }
     );
   };
+  // Add status update mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: boolean }) => 
+      updateTinStatus(id, { trangthai: status }),
+    onSuccess: () => {
+      setIsRefetching(true);
+      queryClient.invalidateQueries({ queryKey: ['tin'] })
+        .then(() => {
+          setTimeout(() => {
+            setIsRefetching(false);
+          }, 800);
+        });
+    },
+    onError: (error) => {
+      console.error('Error updating post status:', error);
+      toast.error('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại sau.');
+    }
+  });
+
   const columns: ColumnDef<TinType>[] = [
     {
       id: 'select',
@@ -267,19 +287,25 @@ export function PostsTable() {
       cell: ({ row }) => {
         const post = row.original;
         const isHidden = !post.trangthai;
+        const isPending = updateStatusMutation.isPending && 
+                         updateStatusMutation.variables?.id === post.id_tin;
+        
         return (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => toggleVisibility(post.id_tin)}
+            onClick={() => toggleVisibility(post)}
+            disabled={isPending}
             className={isHidden ? 'text-muted-foreground' : 'text-primary'}
           >
-            {isHidden ? (
+            {isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : isHidden ? (
               <EyeOff className="h-4 w-4 mr-2" />
             ) : (
               <Eye className="h-4 w-4 mr-2" />
             )}
-            {isHidden ? 'Ẩn' : 'Hiện'}
+            {isPending ? 'Đang cập nhật...' : isHidden ? 'Ẩn' : 'Hiện'}
           </Button>
         );
       },
