@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Link from 'next/link';
 
 const formSchema = z.object({
   id_loaitin: z
@@ -258,14 +259,15 @@ export function CategoryForm({ loaiTin }: { loaiTin?: LoaiTinType }) {
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Đang lưu...' : 'Lưu'}
           </Button>
+          <Link href="/dashboard/categories">
           <Button
             className="cursor-pointer"
             type="button"
             variant="outline"
-            onClick={() => router.push('/dashboard/categories')}
           >
             Huỷ
           </Button>
+          </Link>
         </div>
       </form>
     </Form>

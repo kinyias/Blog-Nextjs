@@ -288,7 +288,7 @@ export function GroupsTable() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/groups/${group.id_nhomtin}/edit`}>Sửa</Link>
+                  <Link href={`/dashboard/groups/${group.id_nhomtin}`}>Sửa</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

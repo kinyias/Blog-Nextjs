@@ -289,7 +289,7 @@ export function CategoriesTable() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/categories/${category.id_loaitin}/edit`}>Sửa</Link>
+                  <Link href={`/dashboard/categories/${category.id_loaitin}`}>Sửa</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

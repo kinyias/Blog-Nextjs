@@ -37,6 +37,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 
 const formSchema = z.object({
   tieude: z.string().min(5, {
@@ -393,17 +394,18 @@ export function PostForm({ post }: { post?: TinType }) {
         </div>
 
         <div className="flex gap-2">
-          <Button type="submit" disabled={isLoading || isLoadingLoaiTin}>
+          <Button variant="success" type="submit" disabled={isLoading || isLoadingLoaiTin}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Đang lưu...' : 'Lưu'}
           </Button>
+          <Link href="/dashboard/posts">
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push('/dashboard/posts')}
           >
             Huỷ
           </Button>
+          </Link>
         </div>
       </form>
     </Form>

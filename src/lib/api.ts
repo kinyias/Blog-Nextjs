@@ -189,7 +189,7 @@ export const getAllLoaiTin = async (): Promise<LoaiTinType[]> => {
   return response.data;
 };
 
-export const getLoaiTinById = async (id: number): Promise<LoaiTinType> => {
+export const getLoaiTinById = async (id: string): Promise<LoaiTinType> => {
   const response = await API.get<LoaiTinType>(`/loai-tin/${id}`);
   return response.data;
 };

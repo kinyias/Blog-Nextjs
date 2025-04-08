@@ -22,6 +22,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { NhomTinType, createNhomTin, updateNhomTin } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 
 const formSchema = z.object({
   ten_nhomtin: z.string().min(2, {
@@ -40,7 +41,7 @@ export function GroupForm({ nhomTin }: { nhomTin?: NhomTinType }) {
     mutationFn: (data: Omit<NhomTinType, 'id_nhomtin'>) => createNhomTin(data),
     onSuccess: () => {
       // Invalidate and refetch the nhomTin list query
-      queryClient.invalidateQueries({ queryKey: ['nhomTin'] });
+      queryClient.invalidateQueries({ queryKey: ['paginated-nhom-tin'] });
     },
   });
 
@@ -50,7 +51,7 @@ export function GroupForm({ nhomTin }: { nhomTin?: NhomTinType }) {
       updateNhomTin(id, data),
     onSuccess: () => {
       // Invalidate and refetch the nhomTin list query
-      queryClient.invalidateQueries({ queryKey: ['nhomTin'] });
+      queryClient.invalidateQueries({ queryKey: ['paginated-nhom-tin'] });
     },
   });
 
@@ -160,14 +161,15 @@ export function GroupForm({ nhomTin }: { nhomTin?: NhomTinType }) {
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Đang lưu...' : 'Lưu'}
           </Button>
+              <Link href="/dashboard/groups">
           <Button
             className='cursor-pointer'
             type="button"
             variant="outline"
-            onClick={() => router.push('/dashboard/groups')}
           >
             Huỷ
           </Button>
+              </Link>
         </div>
       </form>
     </Form>

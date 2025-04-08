@@ -39,6 +39,7 @@ import { useTinPagination } from '@/hooks/usePagination';
 import { formatDate } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
 export function PostsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -100,16 +101,20 @@ export function PostsTable() {
       toast.error('Có lỗi xảy ra khi xóa tin tức. Vui lòng thử lại sau.');
     }
   });
+  const getImageKey = (src: string) =>
+    src.substring(src.lastIndexOf('/') + 1);
 
   const handleDeletePost = (post: TinType) => {
+    const imageKey = getImageKey(post.hinhdaidien);
     deleteMutation.mutate(post.id_tin, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success(`Tin tức "${post.tieude}" đã được xóa thành công.`, {
           style: {
             backgroundColor: '#16a34a',
             color: '#ffffff',
           },
         });
+        await axios.post('/api/uploadthing/delete', { imageKey }); 
         setOpen(false);
       }
     });
@@ -330,7 +335,7 @@ export function PostsTable() {
                 <Link href={`/dashboard/posts/${post.id_tin}`}>Xem</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/dashboard/posts/${post.id_tin}/edit`}>Sửa</Link>
+                <Link href={`/dashboard/posts/${post.id_tin}`}>Sửa</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
