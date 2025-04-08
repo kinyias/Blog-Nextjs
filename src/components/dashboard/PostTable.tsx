@@ -166,7 +166,6 @@ export function PostsTable() {
     hasNextPage: false,
     hasPreviousPage: false,
   };
-
   const toggleVisibility = (post: TinType) => {
     const newStatus = !post.trangthai;
     

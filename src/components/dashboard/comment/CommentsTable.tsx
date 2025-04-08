@@ -33,9 +33,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { BinhLuanQueryParams, BinhLuanType } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { BinhLuanQueryParams, BinhLuanType, deleteBinhLuan, updateBinhLuanStatus } from '@/lib/api';
+import { formatDate, generateSlug } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CommentsTableProps {
   comments: BinhLuanType[];
@@ -62,10 +63,74 @@ export function CommentsTable({
   onStatusChange,
 }: CommentsTableProps) {
   const [selectedComment, setSelectedComment] = useState<BinhLuanType | null>(null);
+  const queryClient = useQueryClient();
 
-  const handleStatusChange = (commentId: number, newStatus: boolean) => {
-    onStatusChange(commentId, newStatus);
-    toast(`The comment has been marked as ${newStatus}.`);
+  // Status change mutation
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: boolean }) => 
+      updateBinhLuanStatus(id, { trangthai: status }),
+    onSuccess: () => {
+      // Invalidate and refetch comments
+      queryClient.invalidateQueries({ queryKey: ['paginated-binh-luan'] });
+      queryClient.invalidateQueries({ queryKey: ['binh-luan-statistics'] });
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteBinhLuan(id),
+    onSuccess: () => {
+      // Invalidate and refetch comments
+      queryClient.invalidateQueries({ queryKey: ['paginated-binh-luan'] });
+      queryClient.invalidateQueries({ queryKey: ['binh-luan-statistics'] });
+    },
+  });
+
+  const handleStatusChange = async (commentId: number, newStatus: boolean) => {
+    try {
+      await statusMutation.mutateAsync({ id: commentId, status: newStatus });
+      onStatusChange(commentId, newStatus);
+      toast.success(
+        `Bình luận đã được ${newStatus ? 'duyệt' : 'đánh dấu chưa duyệt'}.`,
+        {
+          style: {
+            backgroundColor: newStatus ? '#16a34a' : '#eab308',
+            color: '#ffffff',
+          },
+        }
+      );
+      
+      // If we're viewing a comment in the dialog, update its status
+      if (selectedComment && selectedComment.id_binhluan === commentId) {
+        setSelectedComment({
+          ...selectedComment,
+          trangthai: newStatus,
+        });
+      }
+    } catch (error) {
+      console.error('Error updating comment status:', error);
+      toast.error('Đã xảy ra lỗi khi cập nhật trạng thái bình luận.');
+    }
+  };
+
+  const handleDeleteBinhLuan = async (commentId: number) => {
+    try {
+      await deleteMutation.mutateAsync(commentId);
+      toast.success('Bình luận đã được xóa thành công.', {
+        style: {
+          backgroundColor: '#16a34a',
+          color: '#ffffff',
+        },
+      });
+      
+      // If we're viewing the deleted comment, close the dialog
+      if (selectedComment && selectedComment.id_binhluan === commentId) {
+        setSelectedComment(null);
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error('Đã xảy ra lỗi khi xóa bình luận.');
+    }
   };
 
   const getStatusBadge = (status: boolean) => {
@@ -168,7 +233,7 @@ export function CommentsTable({
                     </TableCell>
                     <TableCell>
                       <Link
-                        href={`/dashboard/posts/${comment.id_tin}`}
+                        href={`/posts/${generateSlug(comment.tin?.tieude || "")}-${comment.id_tin}`}
                         className="text-blue-600 hover:underline"
                       >
                         {comment.tin?.tieude || `Bài viết #${comment.id_tin}`}
@@ -213,9 +278,9 @@ export function CommentsTable({
                           )}
                           {/* {comment.trangthai !== 'trash' && ( */}
                             <DropdownMenuItem
-                              // onClick={() =>
-                              //   handleStatusChange(comment.id_binhluan, 'trash')
-                              // }
+                              onClick={() =>
+                                handleDeleteBinhLuan(comment.id_binhluan)
+                              }
                             >
                               <Trash2 className="h-4 w-4 mr-2 text-gray-500" />
                               Xoá
@@ -340,8 +405,10 @@ export function CommentsTable({
               <div className="flex justify-end gap-2">
                 {!selectedComment.trangthai && (
                   <Button
-                    onClick={() =>
-                      handleStatusChange(selectedComment.id_binhluan, true)
+                    onClick={() =>{
+                      handleStatusChange(selectedComment.id_binhluan, true);
+                      setSelectedComment(null); 
+                    }
                     }
                     className="bg-green-600 hover:bg-green-700"
                   >
@@ -352,8 +419,11 @@ export function CommentsTable({
                 {selectedComment.trangthai && (
                   <Button
                     variant="outline"
-                    onClick={() =>
+                     className='cursor-pointer'
+                    onClick={() =>{
                       handleStatusChange(selectedComment.id_binhluan, false)
+                      setSelectedComment(null);
+                    }
                     }
                   >
                     <Clock className="h-4 w-4 mr-2" />
@@ -363,9 +433,13 @@ export function CommentsTable({
                 {/* {selectedComment.trangthai !== 'trash' && ( */}
                   <Button
                     variant="destructive"
-                    // onClick={() =>
-                    //   handleStatusChange(selectedComment.id_binhluan, 'trash')
-                    // }
+                    className='cursor-pointer'
+                    onClick={() =>{
+                      handleDeleteBinhLuan(selectedComment.id_binhluan)
+                      setSelectedComment(null);
+                    }
+                     
+                    }
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Xoá

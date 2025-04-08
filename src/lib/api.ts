@@ -90,6 +90,15 @@ export type TinQueryParams = {
   trangthai?: boolean;
   id_loaitin?: number;
 };
+export type TinViewCountResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id_tin: number;
+    tieude: string;
+    solanxem: number;
+  };
+};
 export type BinhLuanType = {
   id_binhluan: number;
   email: string;
@@ -116,9 +125,7 @@ export type BinhLuanQueryParams = {
   limit?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  search?: string;
   trangthai?: boolean;
-  id_tin?: number;
 };
 export type BinhLuanStatisticsType = {
   total: number;
@@ -133,6 +140,9 @@ export type NhomTinStatusUpdateType = {
   trangthai: boolean;
 };
 export type LoaiTinStatusUpdateType = {
+  trangthai: boolean;
+};
+export type BinhLuanStatusUpdateType = {
   trangthai: boolean;
 };
 // Nhom_tin routes
@@ -259,7 +269,12 @@ export const updateTin = async (id: number, data: Partial<TinType>): Promise<Tin
 export const deleteTin = async (id: number): Promise<void> => {
   await API.delete(`/tin/${id}`);
 };
-
+export const incrementTinViews = async (
+  id: number
+): Promise<TinViewCountResponse> => {
+  const response = await API.patch<TinViewCountResponse>(`/tin/${id}/views`);
+  return response.data;
+};
 export const updateTinStatus = async (
   id: number,
   status: TinStatusUpdateType
@@ -271,6 +286,13 @@ export const getBinhLuanWithPagination = async (
   params: BinhLuanQueryParams
 ): Promise<PaginatedBinhLuanResponse> => {
   const response = await API.get<PaginatedBinhLuanResponse>('/binh-luan/paginated', { params });
+  return response.data;
+};
+export const getBinhLuanByTinId = async (
+  params: BinhLuanQueryParams,
+  id: number
+): Promise<PaginatedBinhLuanResponse> => {
+  const response = await API.get<PaginatedBinhLuanResponse>(`/binh-luan/tin/${id}`, { params });
   return response.data;
 };
 // Binh_luan routes
@@ -297,7 +319,13 @@ export const updateBinhLuan = async (id: number, data: Partial<BinhLuanType>): P
 export const deleteBinhLuan = async (id: number): Promise<void> => {
   await API.delete(`/binh-luan/${id}`);
 };
-
+export const updateBinhLuanStatus = async (
+  id: number,
+  status: BinhLuanStatusUpdateType
+): Promise<BinhLuanType> => {
+  const response = await API.patch<BinhLuanType>(`/binh-luan/${id}/status`, status);
+  return response.data;
+};
 // Binh_luan statistics route
 export const getBinhLuanStatistics = async (): Promise<BinhLuanStatisticsType> => {
   const response = await API.get<BinhLuanStatisticsType>('/binh-luan/statistics');

@@ -98,8 +98,6 @@ export function CommentsManagement() {
       // Refetch the data after status change
       refetch()
       
-      // Show success toast
-      toast.success(`Trạng thái bình luận đã được cập nhật thành ${newStatus}`)
     } catch (error) {
       console.error('Error updating comment status:', error)
       toast.error('Không thể cập nhật trạng thái bình luận')

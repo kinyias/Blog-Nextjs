@@ -3,22 +3,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { ArrowLeft, Calendar, Eye } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { PostComments } from '@/components/posts/PostComment';
-import { getTinById } from '@/lib/api';
+import { getTinById, incrementTinViews, TinType } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useEffect } from 'react';
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
-  
-  // Extract the post ID from the slug (format: title-id)
   const postId = params.slug.split('-').pop();
-  
+  const queryClient = useQueryClient();
   // Fetch post data using React Query
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['post', postId],
@@ -26,6 +25,35 @@ export default function BlogPost() {
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!postId && !isNaN(Number(postId)),
   });
+
+  // Increment view count mutation
+  const { mutate: incrementView } = useMutation({
+    mutationFn: incrementTinViews,
+    onSuccess: (response) => {
+      // Update the post data in the cache with the new view count
+      queryClient.setQueryData(['post', postId], (oldData: TinType | undefined) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          solanxem: response.data.solanxem,
+        };
+      });
+    },
+  });
+
+  // Handle view count increment with localStorage to prevent multiple counts
+  useEffect(() => {
+    if (!post?.id_tin) return;
+
+    const viewKey = `post-view-${post.id_tin}`;
+    const lastView = localStorage.getItem(viewKey);
+    const now = Date.now();
+
+    if (!lastView || now - Number(lastView) > 5 * 60 * 1000) {
+      incrementView(post.id_tin);
+      localStorage.setItem(viewKey, now.toString());
+    }
+  }, [post?.id_tin, incrementView]);
 
   // Handle loading state
   if (isLoading) {
@@ -123,7 +151,7 @@ export default function BlogPost() {
           {/* Comments section */}
           <div className="mb-10">
             <h2 className="mb-6 text-2xl font-bold">Bình luận</h2>
-            <PostComments postSlug={params.slug} />
+            <PostComments postId={Number(postId)} />
           </div>
         </div>
       </article>
