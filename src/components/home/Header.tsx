@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "../theme-toggle"
 import SubHeader from "./SubHeader"
+import { SignedIn, UserButton } from "@clerk/nextjs"
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -122,6 +123,9 @@ export function Header() {
               </Button>
             )}
             <ModeToggle />
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
         </div>
         <div className="container border-t border-border/40 w-full">

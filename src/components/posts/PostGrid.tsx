@@ -30,7 +30,7 @@ export function PostGrid() {
   } = useQuery({
     queryKey: ['posts', queryParams],
     queryFn: () => getTinWithPagination(queryParams),
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: 5 * 60 * 1000, // 5 minute
   });
 
   // Update allPosts when new data is fetched
