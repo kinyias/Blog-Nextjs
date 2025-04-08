@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { TinType } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Eye } from 'lucide-react';
+import { formatDate, generateSlug } from '@/lib/utils';
 
 interface PostCardProps {
   post: TinType;
@@ -13,7 +12,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   return (
-    <Link href={`/posts/${post.id_tin}`}>
+    <Link href={`/posts/${generateSlug(post.tieude)}-${post.id_tin}`}>
       <Card className="h-full overflow-hidden transition-all hover:shadow-md">
         <div className="aspect-video relative overflow-hidden">
           <Image
@@ -34,7 +33,7 @@ export function PostCard({ post }: PostCardProps) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <span>{post.tacgia}</span>
             <span>•</span>
-            <span>{format(new Date(post.ngaydangtin), 'dd MMM, yyyy', { locale: vi })}</span>
+            <span>{formatDate(post.ngaydangtin)}</span>
           </div>
           <p className="text-sm text-muted-foreground line-clamp-3">
             {post.mota}

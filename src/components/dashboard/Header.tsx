@@ -1,9 +1,8 @@
 import { Search } from "lucide-react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ModeToggle } from "../theme-toggle"
+import { SignedIn, UserButton } from "@clerk/nextjs"
 
 export default function Header() {
   return (
@@ -21,14 +20,9 @@ export default function Header() {
       </div>
       <div className="ml-auto flex items-center gap-4">
         <ModeToggle/>
-
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-              <span className="sr-only">User menu</span>
-            </Button>
+        <SignedIn>
+              <UserButton />
+            </SignedIn>
       </div>
     </header>
   )

@@ -36,6 +36,7 @@ import { TinType, getAllLoaiTin, createTin, updateTin } from '@/lib/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
+import { useUser } from '@clerk/nextjs';
 
 const formSchema = z.object({
   tieude: z.string().min(5, {
@@ -65,7 +66,7 @@ export function PostForm({ post }: { post?: TinType }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
-
+  const {user} = useUser();
   // Fetch loại tin data using React Query
   const { data: loaiTinList, isLoading: isLoadingLoaiTin } = useQuery({
     queryKey: ['loaiTin'],
@@ -119,7 +120,7 @@ export function PostForm({ post }: { post?: TinType }) {
         ngaydangtin: values.ngaydangtin,
         trangthai: values.trangthai,
         tinhot: values.tinhot,
-        tacgia: 'Admin', 
+        tacgia: user?.fullName ?? 'Admin', 
         solanxem: post?.solanxem || 0
       };
       if (post?.id_tin) {
