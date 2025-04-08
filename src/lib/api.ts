@@ -88,7 +88,27 @@ export type TinQueryParams = {
   search?: string;
   tinhot?: boolean;
   trangthai?: boolean;
-  id_loaitin?: number;
+  id_loaitin?: string;
+};
+export type AdvancedTinSearchResponse = {
+  data: TinType[];
+  meta: {
+    currentPage: number;
+    perPage: number;
+    totalItems: number;
+    lastPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+};
+
+export type AdvancedTinSearchParams = {
+  loaitin: string; 
+  query: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
 };
 export type TinViewCountResponse = {
   success: boolean;
@@ -280,6 +300,20 @@ export const updateTinStatus = async (
   status: TinStatusUpdateType
 ): Promise<TinType> => {
   const response = await API.patch<TinType>(`/tin/${id}/status`, status);
+  return response.data;
+};
+export const searchTinAdvanced = async (
+  params: AdvancedTinSearchParams
+): Promise<AdvancedTinSearchResponse> => {
+  const defaultParams = {
+    page: 1,
+    limit: 10,
+    ...params,
+  };
+
+  const response = await API.get<AdvancedTinSearchResponse>('/tin/search/advanced', {
+    params: defaultParams,
+  });
   return response.data;
 };
 export const getBinhLuanWithPagination = async (

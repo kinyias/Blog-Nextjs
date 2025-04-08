@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn, generateSlug } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { getAllNhomTin, getAllLoaiTin } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -71,7 +71,7 @@ export default function SubHeader() {
               onMouseLeave={() => setActiveMenu(null)}
             >
               <div className='absolute left-0 top-5 z-50 mt-1 w-[220px] h-full'></div>
-              <Link href={`/categories/${group.id}`} className="text-sm font-medium transition-colors hover:text-primary relative group">
+              <Link href={`/groups/${group.id}`} className="text-sm font-medium transition-colors hover:text-primary relative group">
                 {group.name}
                 <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
               </Link>
@@ -87,7 +87,7 @@ export default function SubHeader() {
                   {group.categories.map((category) => (
                     <li key={category.id} className="px-2 py-1">
                       <Link
-                        href={`/categories/${group.id}/${category.id}`}
+                        href={`/categories/${generateSlug(category.name)}-${category.id}`}
                         className="block rounded-md p-2 text-sm leading-none transition-colors hover:bg-accent hover:text-accent-foreground"
                       >
                         {category.name}
