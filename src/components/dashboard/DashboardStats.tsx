@@ -1,7 +1,17 @@
+'use client';
 import { FileText, Eye, MessageCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery } from "@tanstack/react-query";
+import { getTinSummary } from "@/lib/api";
+import { formatNumberWithCommas } from "@/lib/utils";
 
 export function DashboardStats() {
+  const { data } = useQuery({
+    queryKey: ['tin-summay'],
+    queryFn: getTinSummary,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+  });
+  const summary = data?.data;
   return (
     <>
       <Card>
@@ -10,7 +20,7 @@ export function DashboardStats() {
           <FileText className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">24</div>
+          <div className="text-2xl font-bold">{formatNumberWithCommas(summary?.total_posts || 0)}</div>
         </CardContent>
       </Card>
       <Card>
@@ -19,7 +29,7 @@ export function DashboardStats() {
           <Eye className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">12,234</div>
+          <div className="text-2xl font-bold">{formatNumberWithCommas(summary?.total_views ||0)}</div>
         </CardContent>
       </Card>
       <Card>
@@ -28,7 +38,7 @@ export function DashboardStats() {
           <MessageCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">573</div>
+          <div className="text-2xl font-bold">{formatNumberWithCommas(summary?.total_comments || 0)}</div>
         </CardContent>
       </Card>
     </>

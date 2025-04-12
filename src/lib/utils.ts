@@ -22,3 +22,7 @@ export function generateSlug(text: string): string {
     .replace(/\s+/g, "-") // Replace spaces with hyphens
     .replace(/-+/g, "-"); // Remove duplicate hyphens
 }
+
+export function formatNumberWithCommas(number: number, locale: string = 'en-US'): string {
+  return new Intl.NumberFormat(locale).format(number);
+}

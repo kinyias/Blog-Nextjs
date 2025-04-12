@@ -152,7 +152,14 @@ export type BinhLuanStatisticsType = {
   approved: number;
   pending: number;
 };
-
+export type TinSummaryResponse = {
+  success: boolean;
+  data: {
+    total_posts: number;
+    total_views: number;
+    total_comments: number;
+  };
+};
 export type TinStatusUpdateType = {
   trangthai: boolean;
 };
@@ -263,6 +270,10 @@ export const updateLoaiTinStatus = async (
 // Tin routes
 export const getAllTin = async (): Promise<TinType[]> => {
   const response = await API.get<TinType[]>('/tin');
+  return response.data;
+};
+export const getTinSummary = async (): Promise<TinSummaryResponse> => {
+  const response = await API.get<TinSummaryResponse>('/tin/summary');
   return response.data;
 };
 export const getTinWithPagination = async (

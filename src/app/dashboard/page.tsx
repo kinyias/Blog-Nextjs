@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DashboardStats } from "@/components/dashboard/DashboardStats"
 import { RecentPosts } from "@/components/dashboard/RecentPosts"
+import PopularPosts from "@/components/dashboard/PopularPosts"
 
 export default function DashboardPage() {
   return (
@@ -21,10 +22,10 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>Tin tức phổ biến</CardTitle>
-              <CardDescription>Tin tức nhiều lượt xem nhất 30 ngày gần đây.</CardDescription>
+              <CardDescription>Tin tức phổ biến gần đây</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Tin tức phổ biến.</p>
+            <PopularPosts />
             </CardContent>
           </Card>
         </TabsContent>
