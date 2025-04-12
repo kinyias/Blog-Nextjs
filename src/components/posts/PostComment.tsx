@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -27,7 +27,20 @@ import { Loader2 } from "lucide-react"
 const formSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ" }),
   noidung: z.string().min(3, { message: "Bình luận phải có ít nhất 3 ký tự" }),
+  captcha: z.string().refine((val) => val !== "", {
+    message: "Vui lòng nhập kết quả",
+  }),
 })
+
+// Function to generate a simple math captcha
+function generateCaptcha() {
+  const num1 = Math.floor(Math.random() * 10);
+  const num2 = Math.floor(Math.random() * 10);
+  return {
+    question: `${num1} + ${num2} = ?`,
+    answer: String(num1 + num2)
+  };
+}
 
 interface CommentProps {
   comment: BinhLuanType
@@ -57,14 +70,23 @@ export function PostComments({ postId }: { postId: number }) {
   const [page, setPage] = useState(1)
   const limit = 5 // Comments per page
   
+  // Captcha state
+  const [captcha, setCaptcha] = useState(generateCaptcha())
+  
   // Form setup with validation
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       noidung: "",
+      captcha: "",
     },
   })
+
+  // Refresh captcha when form is reset
+  useEffect(() => {
+    setCaptcha(generateCaptcha());
+  }, [form.formState.isSubmitSuccessful]);
 
   // Fetch comments for this post with pagination
   const { data, isLoading: isLoadingComments } = useQuery({
@@ -93,7 +115,9 @@ export function PostComments({ postId }: { postId: number }) {
 
   // Create comment mutation
   const createCommentMutation = useMutation({
-    mutationFn: (data: { email: string; noidung: string }) => {
+    mutationFn: (data: { email: string; noidung: string; captcha: string }) => {
+     
+      
       const commentData: Omit<BinhLuanType, 'id_binhluan'> = {
         email: data.email,
         noidung: data.noidung,
@@ -110,6 +134,9 @@ export function PostComments({ postId }: { postId: number }) {
       // Reset form
       form.reset()
       
+      // Generate new captcha
+      setCaptcha(generateCaptcha())
+      
       // Show success message
       toast.success("Bình luận của bạn đã được gửi và đang chờ duyệt", {
         style: {
@@ -118,14 +145,32 @@ export function PostComments({ postId }: { postId: number }) {
         },
       })
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error("Error creating comment:", error)
-      toast.error("Đã xảy ra lỗi khi gửi bình luận. Vui lòng thử lại sau.")
+      
+      if (error.message === "Mã xác nhận không đúng") {
+        toast.error("Mã xác nhận không đúng. Vui lòng thử lại.")
+        // Generate new captcha
+        setCaptcha(generateCaptcha())
+        form.setValue("captcha", "")
+      } else {
+        toast.error("Đã xảy ra lỗi khi gửi bình luận. Vui lòng thử lại sau.")
+      }
     }
   })
 
   // Handle form submission
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+     // Verify captcha before submitting
+     if (values.captcha !== captcha.answer) {
+      toast.error("Mã xác nhận không đúng. Vui lòng thử lại.",{
+        style: {
+          backgroundColor: '#ff0000',
+          color: '#ffffff',
+        },
+      });
+        return; // Dừng xử lý nếu mã xác nhận không điề
+    }
     createCommentMutation.mutate(values)
   }
 
@@ -167,6 +212,40 @@ export function PostComments({ postId }: { postId: number }) {
                       {...field} 
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="captcha"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Xác nhận bạn không phải robot</FormLabel>
+                  <div className="flex items-center gap-3">
+                    <div className="rounded bg-muted px-3 py-2 font-medium">
+                      {captcha.question}
+                    </div>
+                    <FormControl>
+                      <Input 
+                        placeholder="Nhập kết quả" 
+                        className="w-32" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        setCaptcha(generateCaptcha());
+                        form.setValue("captcha", "");
+                      }}
+                    >
+                      Làm mới
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
