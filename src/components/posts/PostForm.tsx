@@ -343,16 +343,7 @@ export function PostForm({ post }: { post?: TinType }) {
                                   button: "bg-blue-500 text-primary-foreground hover:bg-primary/90 px-5",
                                   allowedContent: "text-sm text-muted-foreground",
                                 }}
-                                content={{
-                                  button({ ready }) {
-                                    return ready ? "Chọn ảnh" : "Đang tải...";
-                                  },
-                                  allowedContent({ ready, fileTypes }) {
-                                    return ready 
-                                      ? `Chấp nhận: ${fileTypes?.join(", ")}`
-                                      : "Đang kiểm tra...";
-                                  }
-                                }}
+                               
                               />
                             </div>
                           )}
