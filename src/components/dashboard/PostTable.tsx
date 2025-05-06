@@ -249,9 +249,7 @@ export function PostsTable() {
       accessorKey: 'loai_tin',
       header: 'Loại tin tức',
       cell: ({ row }) => {
-        console.log('Row data:', row.original);
         const loaiTin = row.original.loai_tin;
-        console.log('Loai tin:', loaiTin);
         return <div>{loaiTin?.ten_loaitin || 'N/A'}</div>;
       },
     },
