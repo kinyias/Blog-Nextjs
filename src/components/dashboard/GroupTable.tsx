@@ -103,8 +103,11 @@ export function GroupsTable() {
   }
 
   const handleBulkDelete = () => {
-    const selectedIds = Object.keys(rowSelection).map(Number)
-    
+    // Get the actual id_nhomtin values from the selected rows
+    const selectedIds = Object.keys(rowSelection).map(index => {
+      // Convert string index to number and get the corresponding group
+      return groups[Number(index)].id_nhomtin;
+    });
     bulkDeleteMutation.mutate(selectedIds, {
       onSuccess: () => {
         toast.success(`${selectedIds.length} nhóm tin đã được xóa thành công.`, {

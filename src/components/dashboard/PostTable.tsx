@@ -121,7 +121,10 @@ export function PostsTable() {
   };
   
   const handleBulkDelete = () => {
-    const selectedIds = Object.keys(rowSelection).map(Number);
+    const selectedIds = Object.keys(rowSelection).map(index => {
+      // Convert string index to number and get the corresponding group
+      return posts[Number(index)].id_tin;
+    });
     
     bulkDeleteMutation.mutate(selectedIds, {
       onSuccess: () => {

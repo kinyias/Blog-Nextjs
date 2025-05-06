@@ -103,7 +103,10 @@ export function CategoriesTable() {
   }
 
   const handleBulkDelete = () => {
-    const selectedIds = Object.keys(rowSelection).map(String)
+    const selectedIds = Object.keys(rowSelection).map(index => {
+      // Convert string index to number and get the corresponding group
+      return categories[Number(index)].id_loaitin;
+    });
     
     bulkDeleteMutation.mutate(selectedIds, {
       onSuccess: () => {
